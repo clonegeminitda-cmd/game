@@ -1,0 +1,285 @@
+{
+  "id": "room_307",
+  "title": "TIẾNG GÕ PHÒNG 307",
+  "subtitle": "Hồ sơ 001 · Bệnh viện điều dưỡng An Tĩnh",
+  "briefing": "23:40, mưa lớn. Y tá Nguyễn Thị Lan được phát hiện tử vong trong phòng 307, cửa chốt từ bên trong. Camera mất hình 11 phút; bảo vệ nghe tiếng gõ sau thời điểm nạn nhân có thể đã chết. Ba lời khai không khớp nhau. Hãy kiểm tra từng nguồn thời gian, đối chiếu dấu vết với lời khai rồi nộp giả thuyết trong sổ điều tra.",
+  "evidence": [
+    {
+      "id": "door_thread",
+      "title": "Sợi cước tại chốt cửa",
+      "location": "Phòng 307 · chốt cửa",
+      "description": "Sợi cước còn mắc ở vòng chốt cửa; bên cạnh là ảnh chụp hiện trạng trước khi mở cửa.",
+      "detail": "Ảnh có hai dấu quan trọng: vết mòn mới trên vòng chốt hướng về khe cửa và sợi cước còn mắc ở vòng chốt. Khung cửa không có vết phá. Sợi cước không phải mẫu sinh học và chưa được đối chiếu với một cá nhân.",
+      "method": "Đối chiếu ảnh hiện trạng với dấu vết trên chốt cửa",
+      "observations": [
+        {
+          "id": "inside_only",
+          "text": "Cửa chốt trong chứng minh không ai có thể rời phòng."
+        },
+        {
+          "id": "staged_lock",
+          "text": "Dấu kéo hướng ra khe cửa cho thấy chốt có thể đã bị tác động từ bên ngoài."
+        },
+        {
+          "id": "identify_owner",
+          "text": "Chỉ sợi cước này đã đủ xác định danh tính hung thủ."
+        }
+      ],
+      "correct_observation": "staged_lock",
+      "analysis": "Căn phòng khóa kín có thể là hiện trường dàn dựng. Dấu vết làm suy yếu giả thuyết tự khóa cửa, nhưng không tự xác định người thực hiện.",
+      "related_evidence": [
+        "maintenance_note",
+        "witness_statement"
+      ]
+    },
+    {
+      "id": "ward_clock",
+      "title": "Đồng hồ trực chậm bảy phút",
+      "location": "Hành lang tầng 3 · đồng hồ cạnh bàn tiếp nhận",
+      "description": "Đồng hồ tường cạnh bàn tiếp nhận, kèm phiếu so sánh với đồng hồ đã đồng bộ của tổ khám nghiệm.",
+      "detail": "Lúc tổ khám nghiệm ghi 23:40 trên đồng hồ đã đồng bộ, đồng hồ tường vẫn chạy nhưng chỉ 23:33. Bảo vệ Bình ghi rõ ông đã nhìn đồng hồ tường khi nghe tiếng gõ lúc 23:32. Không có ghi nhận chỉnh lại đồng hồ trong buổi tối.",
+      "method": "So sánh hai nguồn thời gian và hiệu chỉnh mốc lời khai",
+      "observations": [
+        {
+          "id": "subtract_offset",
+          "text": "Tiếng gõ xảy ra vào khoảng 23:25 theo giờ chuẩn."
+        },
+        {
+          "id": "same_time",
+          "text": "Có thể dùng nguyên mốc 23:32 làm giờ chuẩn."
+        },
+        {
+          "id": "add_offset",
+          "text": "Đồng hồ chậm 7 phút; tiếng gõ tương ứng khoảng 23:39 giờ chuẩn."
+        }
+      ],
+      "correct_observation": "add_offset",
+      "analysis": "Mốc tiếng gõ được hiệu chỉnh thành khoảng 23:39, sau khoảng tử vong ước tính. Cần tìm nguồn âm khác; tiếng gõ không chứng minh nạn nhân còn sống.",
+      "related_evidence": [
+        "medical_report",
+        "witness_statement",
+        "maintenance_note"
+      ]
+    },
+    {
+      "id": "cctv_log",
+      "title": "Nhật ký camera và thẻ kỹ thuật",
+      "location": "Phòng camera · màn hình giám sát",
+      "description": "Bản xuất nhật ký có chữ ký số nội bộ và ảnh cuối trước khi đường hình bị ngắt.",
+      "detail": "Máy chủ dùng giờ chuẩn. 23:17: KTH-02 gửi lệnh bảo trì trực tiếp tại tủ tầng 3. 23:28: đường hình được khôi phục, đúng 11 phút. Tủ kỹ thuật ghi thẻ HUY-02 mở lúc 23:16; thẻ này do Trần Quốc Huy giữ trong ca. Ảnh 23:15 cho thấy mặt Huy cạnh cửa 307. Nhật ký không ghi lỗi nguồn và không thể tự chứng minh ai gây ra cái chết.",
+      "method": "Đối chiếu ảnh gốc, nhật ký máy chủ và sổ cấp thẻ",
+      "observations": [
+        {
+          "id": "manual_gap",
+          "text": "Mất hình bắt đầu bằng lệnh bảo trì tại tầng 3; ảnh Huy mâu thuẫn với lời khai không lên tầng."
+        },
+        {
+          "id": "storm_only",
+          "text": "Mưa lớn đủ chứng minh camera hỏng do mất điện."
+        },
+        {
+          "id": "death_exact",
+          "text": "23:17 chắc chắn là phút nạn nhân tử vong."
+        }
+      ],
+      "correct_observation": "manual_gap",
+      "analysis": "Khoảng trống camera được chủ động tạo ra. Ảnh và thẻ kỹ thuật đặt Huy ở tầng 3 trước đó, trái lời khai chỉ ở tầng trệt; thời điểm tử vong vẫn phải dựa vào báo cáo chuyên môn.",
+      "related_evidence": [
+        "medical_report",
+        "maintenance_note",
+        "witness_statement"
+      ]
+    },
+    {
+      "id": "medical_report",
+      "title": "Báo cáo khám nghiệm sơ bộ",
+      "location": "Phòng 307 · tủ cạnh giường",
+      "description": "Bản tóm tắt của tổ pháp y, đã ký nhận lúc 23:50.",
+      "detail": "Báo cáo ghi tử vong do chấn thương, khoảng thời gian ước tính 23:16–23:22 theo giờ chuẩn. Không có cơ sở cho giả thuyết tự gây thương tích trong dữ kiện của vụ án. Khoảng thời gian là ước tính và không xác định chính xác từng phút; tiếng gõ chỉ được nghe thấy, không ai nhìn thấy Lan tạo ra âm thanh đó.",
+      "method": "Đọc phạm vi ước tính và đối chiếu lời khai về tiếng gõ",
+      "observations": [
+        {
+          "id": "minute_exact",
+          "text": "Báo cáo kết luận tử vong chính xác lúc 23:19."
+        },
+        {
+          "id": "window_not_knock",
+          "text": "Khoảng 23:16–23:22 không phù hợp việc dùng tiếng gõ muộn hơn để chứng minh Lan còn sống."
+        },
+        {
+          "id": "knock_overrides",
+          "text": "Có tiếng gõ nên có thể bỏ qua toàn bộ báo cáo khám nghiệm."
+        }
+      ],
+      "correct_observation": "window_not_knock",
+      "analysis": "Khoảng tử vong nằm trong một phần thời gian camera bị ngắt. Sau khi hiệu chỉnh đồng hồ, tiếng gõ muộn hơn ít nhất 17 phút so với cuối khoảng ước tính; cần tìm một nguồn âm khác.",
+      "related_evidence": [
+        "ward_clock",
+        "cctv_log",
+        "maintenance_note"
+      ]
+    },
+    {
+      "id": "maintenance_note",
+      "title": "Phiếu sửa chữa và bộ gõ hẹn giờ",
+      "location": "Hành lang tầng 3 · bảng hồ sơ kỹ thuật",
+      "description": "Phiếu cấp dụng cụ KTH-02, ảnh thiết bị và biên bản thu giữ bộ gõ T-04 tại khoang kỹ thuật nối vách phòng 307.",
+      "detail": "Phiếu ký Huy nhận một cuộn cước và bộ gõ thử chuông T-04 lúc 22:50. T-04 đã được tìm thấy trong khoang kỹ thuật cạnh vách 307; nhật ký của máy ghi tác động vào vách lúc 23:39 giờ chuẩn. Phiếu thử đã xác nhận âm này nghe như ba tiếng gõ cửa từ hành lang. Kẹp cùng hồ sơ là thư Lan yêu cầu Huy giải trình hóa đơn sửa chữa trùng vào sáng hôm sau. Không có vật liệu phân tích DNA trong tập hồ sơ này.",
+      "method": "Đối chiếu số thiết bị, phiếu cấp và bản ghi thử âm",
+      "observations": [
+        {
+          "id": "ghost_confirmed",
+          "text": "Ba tiếng gõ từ phòng trống xác nhận có hiện tượng siêu nhiên."
+        },
+        {
+          "id": "invoice_only",
+          "text": "Hóa đơn trùng đã đủ chứng minh Huy gây án, không cần dấu vết khác."
+        },
+        {
+          "id": "timed_knock",
+          "text": "T-04 giải thích tiếng gõ lúc 23:39; phiếu dụng cụ và thư giải trình liên kết Huy với việc dàn dựng."
+        }
+      ],
+      "correct_observation": "timed_knock",
+      "analysis": "Thiết bị giải thích âm thanh sau tử vong. Dụng cụ được cấp và mâu thuẫn tài chính cung cấp liên hệ, phương tiện và động cơ; cần ghép với ảnh camera, dấu chốt và lời khai để kết luận.",
+      "related_evidence": [
+        "door_thread",
+        "ward_clock",
+        "cctv_log",
+        "witness_statement"
+      ]
+    },
+    {
+      "id": "witness_statement",
+      "title": "Ba biên bản lời khai",
+      "location": "Hành lang tầng 3 · bàn tiếp nhận",
+      "description": "Biên bản ký nhận của bảo vệ Bình, y tá Mai và kỹ thuật viên Huy.",
+      "detail": "Bình: 'Tôi nghe ba tiếng gõ lúc 23:32 trên đồng hồ tường; tôi không nhìn thấy ai bên trong.' Mai: '23:12 tôi rời tầng 3, 23:14 ký nhận thuốc tại tầng trệt; lúc đi qua tôi thấy Lan cầm tập hóa đơn chờ Huy.' Phiếu nhận thuốc có người thứ hai xác nhận. Huy: 'Từ 23:00 đến 23:40 tôi chỉ ở tầng trệt; cả tối không gặp Lan, bộ gõ vẫn nằm trong tủ.' Không lời khai nào tự có giá trị như chứng cứ đã được kiểm chứng.",
+      "method": "Tách điều nhân chứng trực tiếp thấy khỏi suy đoán và đối chiếu hồ sơ",
+      "observations": [
+        {
+          "id": "contradiction_huy",
+          "text": "Lời Huy có thể kiểm chứng bằng ảnh tầng 3 và vị trí T-04; lời Bình chỉ xác nhận một âm thanh."
+        },
+        {
+          "id": "blame_binh",
+          "text": "Bình nghe tiếng gõ nên chắc chắn ông đã ở trong phòng."
+        },
+        {
+          "id": "trust_all",
+          "text": "Ba biên bản có chữ ký nên mọi câu trong đó đều đúng."
+        }
+      ],
+      "correct_observation": "contradiction_huy",
+      "analysis": "Huy phủ nhận cả sự hiện diện ở tầng 3 lẫn việc dùng bộ gõ, mâu thuẫn với hai nguồn độc lập. Bình nhầm nguồn giờ và suy diễn âm thanh; Mai có mốc 23:14 được xác nhận, không chỉ một lời tự khai.",
+      "related_evidence": [
+        "cctv_log",
+        "maintenance_note",
+        "ward_clock"
+      ]
+    }
+  ],
+  "suspects": [
+    {
+      "id": "binh",
+      "name": "Lê Văn Bình · Bảo vệ",
+      "statement": "Tôi nghe ba tiếng gõ lúc 23:32 trên đồng hồ tường. Chắc cô Lan còn sống khi ấy... Tôi không nhìn thấy ai trong phòng."
+    },
+    {
+      "id": "mai",
+      "name": "Phạm Ngọc Mai · Y tá",
+      "statement": "Tôi rời tầng 3 lúc 23:12 và ký nhận thuốc dưới tầng trệt lúc 23:14. Lan mang hóa đơn đến để gặp Huy."
+    },
+    {
+      "id": "huy",
+      "name": "Trần Quốc Huy · Kỹ thuật viên",
+      "statement": "Tôi chỉ ở tầng trệt từ 23:00 đến 23:40, không gặp Lan. Camera hỏng do mưa. Bộ gõ vẫn ở trong tủ."
+    }
+  ],
+  "mechanisms": [
+    {
+      "id": "supernatural",
+      "text": "Nạn nhân tự khóa cửa; tiếng gõ là bằng chứng của hiện tượng siêu nhiên."
+    },
+    {
+      "id": "staged_room",
+      "text": "Ngắt camera bằng lệnh bảo trì, dàn dựng chốt cửa và tạo tiếng gõ muộn bằng thiết bị hẹn giờ."
+    },
+    {
+      "id": "witness_attack",
+      "text": "Vụ tấn công xảy ra lúc tiếng gõ vang lên; camera ngắt hoàn toàn do mưa."
+    }
+  ],
+  "solution": {
+    "suspect_id": "huy",
+    "mechanism_id": "staged_room",
+    "required_evidence": [
+      "door_thread",
+      "ward_clock",
+      "cctv_log",
+      "medical_report",
+      "maintenance_note",
+      "witness_statement"
+    ]
+  },
+  "timeline": [
+    {
+      "time": "23:12–23:14",
+      "event": "Mai rời tầng 3 rồi ký nhận thuốc ở tầng trệt; phiếu có người thứ hai xác nhận.",
+      "requires": [
+        "witness_statement"
+      ]
+    },
+    {
+      "time": "23:15–23:17",
+      "event": "Ảnh ghi nhận Huy cạnh phòng 307; thẻ HUY-02 mở tủ 23:16, lệnh bảo trì ngắt camera lúc 23:17.",
+      "requires": [
+        "cctv_log"
+      ]
+    },
+    {
+      "time": "23:16–23:22",
+      "event": "Khoảng tử vong ước tính. Không thể suy ra chính xác từng phút.",
+      "requires": [
+        "medical_report"
+      ]
+    },
+    {
+      "time": "23:28",
+      "event": "Camera hoạt động trở lại sau 11 phút mất hình.",
+      "requires": [
+        "cctv_log"
+      ]
+    },
+    {
+      "time": "23:39",
+      "event": "23:32 trên đồng hồ chậm 7 phút tương ứng 23:39 giờ chuẩn. Tiếng gõ xuất hiện sau khoảng tử vong.",
+      "requires": [
+        "ward_clock",
+        "witness_statement",
+        "medical_report"
+      ]
+    },
+    {
+      "time": "23:39",
+      "event": "Nhật ký T-04 ghi bộ gõ tác động lên vách; đây là nguồn âm kiểm chứng được.",
+      "requires": [
+        "maintenance_note"
+      ]
+    },
+    {
+      "time": "23:40",
+      "event": "Phát hiện nạn nhân trong phòng 307; tổ điều tra tiếp nhận hiện trường.",
+      "requires": []
+    }
+  ],
+  "hints": [
+    "Bắt đầu ở phòng 307: một chốt khóa không tự nói được ai đã kéo nó.",
+    "Kiểm tra đồng hồ cạnh bàn tiếp nhận. Đồng hồ chạy chậm thì phải cộng hay trừ khi đổi sang giờ chuẩn?",
+    "Tại phòng camera, phân biệt lệnh bảo trì với lỗi mất điện; đừng dùng mất hình làm thời điểm tử vong.",
+    "Đọc báo cáo ở phòng 307. Một khoảng ước tính không phải thời điểm chính xác.",
+    "Trên bảng hồ sơ kỹ thuật ngoài hành lang có phiếu thiết bị. Đối chiếu thời gian bộ gõ với thời gian đã hiệu chỉnh.",
+    "Biên bản tại bàn tiếp nhận giúp phân biệt điều nhân chứng thấy và điều họ suy diễn.",
+    "Đã đủ sáu nguồn dữ kiện. Trong sổ điều tra, chọn người có lời khai mâu thuẫn cùng cơ chế giải thích cả camera, chốt cửa và tiếng gõ."
+  ]
+}

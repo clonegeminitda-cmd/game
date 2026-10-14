@@ -1,0 +1,41 @@
+DARK EVIDENCE — HỒ SƠ BÓNG TỐI
+Prototype 0.1 · Tiếng Gõ Phòng 307 · Chơi đơn
+
+1. Giải nén toàn bộ DarkEvidence-Windows-x86_64-release.zip vào một thư mục.
+2. Nhấp đúp DarkEvidence.exe. Không chạy trực tiếp bên trong file ZIP.
+3. Chọn “Hồ sơ mới” hoặc nút bắt đầu trên menu. Đọc nhiệm vụ rồi khám xét.
+
+Windows 10/11 64-bit, driver đồ họa hỗ trợ OpenGL 3.3.
+Không cần Godot, Python hoặc Blender để chơi bản EXE.
+Nếu cửa sổ không mở: cập nhật driver Intel/AMD/NVIDIA từ nhà sản xuất,
+kiểm tra log trong thư mục app_userdata bên dưới. Không xóa file lưu khi thử sửa lỗi.
+Bản xuất chưa được ký số. Không cần quyền quản trị để chạy.
+
+ĐIỀU KHIỂN
+WASD: đi; chuột: nhìn; Shift: chạy; Ctrl: cúi; E: khám xét;
+F: đèn pin; Tab: sổ điều tra; M: sơ đồ; Esc: đóng bảng/tạm dừng;
+F3: thông số hiệu năng.
+
+CÁCH CHƠI
+Đi tìm 6 vật chứng trong hành lang, phòng 307 và phòng camera.
+Đọc chi tiết rồi chọn nhận định có căn cứ để ghi nhận vật chứng.
+Sổ điều tra chứa lời khai, timeline, ghi chú, gợi ý và phần nộp giả thuyết.
+Kết luận sai không khóa vụ án: tiếp tục điều tra và thử lại.
+Tiến độ tự lưu trong phiên chơi; “Tiếp tục” khôi phục hồ sơ đã lưu.
+Chọn hồ sơ mới sẽ bắt đầu lại và thay thế tiến độ cũ sau khi lưu.
+
+CÀI ĐẶT GỢI Ý
+Intel UHD: bắt đầu với Thấp, 1280×720, giới hạn 30 hoặc 45 FPS.
+Có 4 mức đồ họa và giới hạn 30/45/60/90 FPS; không bảo đảm đạt 90 FPS.
+
+FILE LƯU / LOG
+Mở %APPDATA%\Godot\app_userdata\DARK EVIDENCE — Hồ Sơ Bóng Tối\
+trên Windows. Sao lưu thư mục trước khi sửa file tiến độ thủ công.
+
+PHẠM VI BẢN NÀY
+Prototype Giai đoạn 1: chơi đơn, môi trường mẫu, khám xét và suy luận.
+Chưa có multiplayer Internet, AI đồng đội, NPC hội thoại hoặc minigame pháp y.
+Bản Windows được xuất bằng Godot 4.6.3 Compatibility; quá trình kiểm thử
+tự động thực hiện trên Linux. Cần chơi thử tiếp trên máy Windows thật.
+
+Giấy phép engine và font có trong thư mục licenses đi kèm.

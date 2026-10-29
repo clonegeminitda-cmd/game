@@ -48,6 +48,7 @@ class EngineTest {
             assertTrue("content://$target.notes/session" in strings)
         }
         ZipFile(file).use { zip ->
+            ZipFile(sample).use { source -> assertContentEquals(source.getInputStream(source.getEntry("classes.dex")).readBytes(), zip.getInputStream(zip.getEntry("classes.dex")).readBytes(), "DEX thư viện không có định danh cần đổi phải giữ nguyên byte") }
             val dexFiles = zip.entries().asSequence().filter { Regex("classes([0-9]+)?\\.dex").matches(it.name) }.map { entry -> zip.getInputStream(entry).use { DexBackedDexFile.fromInputStream(Opcodes.getDefault(), it.buffered()) } }.toList()
             val classes = dexFiles.flatMap { it.classes.toList() }
             val strings = classes.flatMap { it.methods.toList() }.flatMap { it.implementation?.instructions?.toList() ?: emptyList() }
@@ -103,5 +104,12 @@ class EngineTest {
         assertFails { ApkEngine.build(sample, sample, Mode.RESIGN, "", "", identity) }
         assertFalse(ApkEngine.validPackage("invalid")); assertFalse(ApkEngine.validPackage("vn.VietHoa.app"))
         assertFalse(ApkEngine.validPackage("android.hack")); assertTrue(ApkEngine.validPackage(target))
+    }
+    @Test fun rejectsMalformedInputPackage() {
+        val broken = variant("invalid-package.apk") { it.androidManifest.setPackageName("vn.bad/package") }
+        assertFailsWith<IllegalArgumentException> { ApkEngine.inspect(broken) }
+        val output = fresh("must-not-exist-invalid-package.apk")
+        assertFails { ApkEngine.build(broken, output, Mode.RESIGN, "", "", identity) }
+        assertFalse(output.exists())
     }
 }

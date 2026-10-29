@@ -1,0 +1,119 @@
+Starting a Gradle Daemon, 1 stopped Daemon could not be reused, use --status for details
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:compileKotlin UP-TO-DATE
+> Task :core:compileJava NO-SOURCE
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar UP-TO-DATE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :app:l8DexDesugarLibDebug UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:preDebugAndroidTestBuild SKIPPED
+> Task :app:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :sample:preBuild UP-TO-DATE
+> Task :sample:preDebugBuild UP-TO-DATE
+> Task :sample:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :sample:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :sample:generateDebugBuildConfig UP-TO-DATE
+> Task :sample:checkDebugAarMetadata UP-TO-DATE
+> Task :sample:generateDebugResValues UP-TO-DATE
+> Task :sample:mapDebugSourceSetPaths UP-TO-DATE
+> Task :sample:generateDebugResources UP-TO-DATE
+> Task :sample:mergeDebugResources UP-TO-DATE
+> Task :sample:packageDebugResources UP-TO-DATE
+> Task :sample:parseDebugLocalResources UP-TO-DATE
+> Task :sample:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksDebug UP-TO-DATE
+> Task :sample:processDebugMainManifest UP-TO-DATE
+> Task :sample:processDebugManifest UP-TO-DATE
+> Task :sample:processDebugManifestForPackage UP-TO-DATE
+> Task :sample:processDebugResources UP-TO-DATE
+> Task :sample:compileDebugKotlin UP-TO-DATE
+> Task :sample:javaPreCompileDebug UP-TO-DATE
+> Task :sample:compileDebugJavaWithJavac UP-TO-DATE
+> Task :sample:mergeDebugShaders UP-TO-DATE
+> Task :sample:compileDebugShaders NO-SOURCE
+> Task :sample:generateDebugAssets UP-TO-DATE
+> Task :sample:mergeDebugAssets UP-TO-DATE
+> Task :sample:compressDebugAssets UP-TO-DATE
+> Task :sample:processDebugJavaRes UP-TO-DATE
+> Task :sample:mergeDebugJavaResource UP-TO-DATE
+> Task :sample:checkDebugDuplicateClasses UP-TO-DATE
+> Task :sample:desugarDebugFileDependencies UP-TO-DATE
+> Task :sample:mergeExtDexDebug UP-TO-DATE
+> Task :sample:mergeLibDexDebug UP-TO-DATE
+> Task :sample:dexBuilderDebug UP-TO-DATE
+> Task :sample:mergeProjectDexDebug UP-TO-DATE
+> Task :sample:mergeDebugJniLibFolders UP-TO-DATE
+> Task :sample:mergeDebugNativeLibs NO-SOURCE
+> Task :sample:stripDebugDebugSymbols NO-SOURCE
+> Task :sample:validateSigningDebug UP-TO-DATE
+> Task :sample:writeDebugAppMetadata UP-TO-DATE
+> Task :sample:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :sample:packageDebug UP-TO-DATE
+> Task :sample:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :sample:assembleDebug UP-TO-DATE
+> Task :app:sampleTestAssets UP-TO-DATE
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+
+> Task :app:compileDebugKotlin
+w: file:///workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:73:81 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:73:111 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:73:140 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:73:171 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:dexBuilderDebug
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:mergeProjectDexDebug
+> Task :app:generateDebugAndroidTestLintModel
+> Task :app:generateDebugLintReportModel
+> Task :app:generateDebugUnitTestLintModel
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleDebug
+> Task :app:lintAnalyzeDebugAndroidTest
+> Task :app:lintAnalyzeDebugUnitTest
+> Task :app:lintAnalyzeDebug
+
+> Task :app:lintReportDebug
+Wrote HTML report to file:///workspace/work/apk-tach-goc/app/build/reports/lint-results-debug.html
+
+> Task :app:lintDebug
+
+BUILD SUCCESSFUL in 45s
+81 actionable tasks: 13 executed, 68 up-to-date

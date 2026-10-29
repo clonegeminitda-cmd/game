@@ -22,6 +22,7 @@ class MainActivity : Activity() {
     private val ink = Color.rgb(24, 45, 39)
     private val muted = Color.rgb(92, 110, 102)
     private lateinit var content: LinearLayout
+    private lateinit var screenRoot: LinearLayout
     private lateinit var metadata: TextView
     private lateinit var status: TextView
     private lateinit var error: TextView
@@ -67,7 +68,8 @@ class MainActivity : Activity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val frame = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setBackgroundColor(Color.rgb(243, 246, 243)) }
+        val frame = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; isFocusableInTouchMode = true; setBackgroundColor(Color.rgb(243, 246, 243)) }
+        screenRoot = frame
         frame.setOnApplyWindowInsetsListener { v, insets -> v.setPadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight, insets.systemWindowInsetBottom); insets }
         setContentView(frame)
         val header = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(22), dp(23), dp(22), dp(18)); setBackgroundColor(Color.rgb(16, 43, 38)); frame.addView(this) }
@@ -129,6 +131,7 @@ class MainActivity : Activity() {
         }
         text(content, "Xử lý hoàn toàn trên điện thoại • Android 8.0 trở lên\nViệc ký lại có thể làm hỏng xác thực Google, DRM hoặc kiểm tra chữ ký của ứng dụng.", 12f, muted)
         savedInstanceState?.let { label.setText(it.getString("label")); packageNameField.setText(it.getString("package")); modes.check(if (it.getBoolean("clone", true)) cloneRadio.id else signRadio.id) }
+        screenRoot.requestFocus()
         restoreLastResult()
         render(AppState.snapshot)
     }
@@ -163,6 +166,7 @@ class MainActivity : Activity() {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }, 100)
     private fun runService(intent: Intent) {
+        focusScreen()
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 200)
         try { startForegroundService(intent) } catch (e: Exception) { message("Không khởi chạy được xử lý", e.message ?: "Lỗi Android") }
     }
@@ -226,6 +230,7 @@ class MainActivity : Activity() {
     }
     private fun localWork(description: String, action: () -> Unit) {
         if (uiBusy || AppState.snapshot.busy) return
+        focusScreen()
         uiBusy = true; render(AppState.snapshot); status.text = description
         worker.execute {
             try { action() } catch (e: Exception) { runOnUiThread { message("Không hoàn tất", e.message ?: e.javaClass.simpleName) } }
@@ -256,6 +261,10 @@ class MainActivity : Activity() {
         if (file.exists() && file.parentFile?.canonicalPath == File(filesDir, "results").canonicalPath) currentReport = BuildReport(file, prefs.getString("package", "") ?: "", prefs.getString("hash", "") ?: "", emptyList(), prefs.getString("cert", "") ?: "")
     }
     private fun message(title: String, body: String) { if (!isFinishing && !isDestroyed) AlertDialog.Builder(this).setTitle(title).setMessage(body).setPositiveButton("Đóng", null).show() }
+    private fun focusScreen() {
+        screenRoot.requestFocus()
+        (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).hideSoftInputFromWindow(screenRoot.windowToken, 0)
+    }
     private fun showLimits() = message("Hỗ trợ của bản 0.1.0", "• APK đơn có DEX thông thường; tách gốc giữ namespace lớp và sửa định danh theo bảng ánh xạ.\n• Chặn split, sharedUserId, thư viện dùng chung, native khi tách gốc, mã nhúng và tài nguyên chưa hỗ trợ.\n• Dữ liệu hoặc phiên đăng nhập bản gốc không được sao chép.\n• Đăng nhập Google, DRM, app links và kiểm tra chữ ký có thể hỏng sau khi ký lại. Không vượt chống gian lận.\n• Xác minh chữ ký không đảm bảo ứng dụng chạy được. Luôn cài thử.\n• Chỉ xử lý APK bạn có quyền sử dụng và sửa đổi.")
     override fun onDestroy() { if (isFinishing) { pendingKey?.fill(0); pendingKey = null }; worker.shutdown(); super.onDestroy() }
 }

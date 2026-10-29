@@ -21,11 +21,17 @@ rg -q CLONE_SESSION "$TASK_OUTPUT/clone-before.xml"
 if rg -q ORIGINAL_SESSION "$TASK_OUTPUT/clone-before.xml"; then exit 1; fi
 $TASK_ADB shell dumpsys package vn.apktachgoc.sample > "$TASK_OUTPUT/original-package.txt"
 $TASK_ADB shell dumpsys package vn.apktachgoc.sample.tachgoc > "$TASK_OUTPUT/clone-package.txt"
+TASK_ORIGINAL_UID=$(rg -m1 -o 'userId=[0-9]+' "$TASK_OUTPUT/original-package.txt")
+TASK_CLONE_UID=$(rg -m1 -o 'userId=[0-9]+' "$TASK_OUTPUT/clone-package.txt")
+[[ -n "$TASK_ORIGINAL_UID" && -n "$TASK_CLONE_UID" && "$TASK_ORIGINAL_UID" != "$TASK_CLONE_UID" ]]
+echo "UID riêng: $TASK_ORIGINAL_UID / $TASK_CLONE_UID"
 $TASK_ADB uninstall vn.apktachgoc.sample
+$TASK_ADB shell am force-stop vn.apktachgoc.sample.tachgoc
 $TASK_ADB shell am start -W -n vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.MainActivity
 $TASK_ADB shell run-as vn.apktachgoc.sample.tachgoc cat shared_prefs/session.xml > "$TASK_OUTPUT/clone-after-original-uninstall.xml"
 rg -q CLONE_SESSION "$TASK_OUTPUT/clone-after-original-uninstall.xml"
 $TASK_ADB uninstall vn.apktachgoc
+$TASK_ADB shell am force-stop vn.apktachgoc.sample.tachgoc
 $TASK_ADB shell am start -W -n vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.MainActivity
 $TASK_ADB shell run-as vn.apktachgoc.sample.tachgoc cat shared_prefs/session.xml > "$TASK_OUTPUT/clone-after-tool-uninstall.xml"
 rg -q CLONE_SESSION "$TASK_OUTPUT/clone-after-tool-uninstall.xml"

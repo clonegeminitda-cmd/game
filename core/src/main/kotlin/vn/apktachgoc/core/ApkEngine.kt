@@ -74,6 +74,7 @@ object ApkEngine {
             require(all.none { it.name in setOf("overlay", "instrumentation", "static-library", "sdk-library", "uses-static-library", "uses-sdk-library") }) { "APK hệ thống, overlay, instrumentation hoặc thư viện chia sẻ chưa được hỗ trợ." }
             require(module.hasTableBlock().not() || module.tableBlock.size() == 1) { "APK có nhiều package tài nguyên; chưa hỗ trợ." }
             val pkg = manifest.packageName ?: error("Thiếu package name.")
+            require(pkg.length in 3..223 && Regex("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)+").matches(pkg)) { "Package của APK đầu vào không hợp lệ; không thể tạo APK cài được." }
             return ApkInfo(pkg, manifest.versionName ?: "?", manifest.versionCode ?: 0, manifest.minSdkVersion ?: 1, native)
         }
     }
@@ -198,6 +199,8 @@ object ApkEngine {
         dexFiles.forEachIndexed { i, source ->
             progress(25 + i * 30 / dexFiles.size, "Xử lý DEX ${i + 1}/${dexFiles.size}")
             val dex = source.openStream().use { DexBackedDexFile.fromInputStream(Opcodes.getDefault(), it.buffered()) }
+            // Most library-only DEX files contain no app identifiers. Preserve their exact bytes.
+            if (dex.stringReferences.none { rewriteValue(it.string, mapping) != it.string }) return@forEachIndexed
             val rewriter = DexRewriter(object : RewriterModule() {
                 override fun getInstructionRewriter(rewriters: Rewriters): Rewriter<Instruction> = object : InstructionRewriter(rewriters) {
                     override fun rewrite(value: Instruction): Instruction {

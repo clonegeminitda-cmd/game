@@ -29,7 +29,7 @@ object KeyVault {
     }
     @Synchronized fun get(context: Context): SigningIdentity {
         val file = File(context.noBackupFilesDir, "signing-key.aes")
-        if (!file.exists()) return SigningKeys.create().also { save(context, it) }
+        if (!file.exists() && !File(file.path + ".bak").exists() && !File(file.path + ".new").exists()) return SigningKeys.create().also { save(context, it) }
         try {
             val encrypted = AtomicFile(file).openRead().use { it.readBytes() }
             require(encrypted.size > 28)

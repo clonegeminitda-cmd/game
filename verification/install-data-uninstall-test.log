@@ -1,0 +1,41 @@
+/sdcard/Android/data/vn.apktachgoc/files/device-test/./: 4 files pulled, 0 skipped. 9.0 MB/s (2463042 bytes in 0.262s)
+Performing Streamed Install
+Success
+Performing Streamed Install
+Success
+Broadcasting: Intent { flg=0x400000 cmp=vn.apktachgoc.sample/.SessionReceiver (has extras) }
+Broadcast completed: result=0, data="ORIGINAL_SESSION"
+Broadcasting: Intent { flg=0x400000 cmp=vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.SessionReceiver (has extras) }
+Broadcast completed: result=0, data="CLONE_SESSION"
+Starting: Intent { cmp=vn.apktachgoc.sample/.MainActivity }
+Status: ok
+Activity: vn.apktachgoc.sample/.MainActivity
+ThisTime: 1948
+TotalTime: 1948
+WaitTime: 2034
+Complete
+Starting: Intent { cmp=vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.MainActivity }
+Status: ok
+Activity: vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.MainActivity
+ThisTime: 2832
+TotalTime: 2832
+WaitTime: 3082
+Complete
+UID riêng: userId=10068 / userId=10067
+Success
+Starting: Intent { cmp=vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.MainActivity }
+Status: ok
+Activity: vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.MainActivity
+ThisTime: 1973
+TotalTime: 1973
+WaitTime: 2141
+Complete
+Success
+Starting: Intent { cmp=vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.MainActivity }
+Status: ok
+Activity: vn.apktachgoc.sample.tachgoc/vn.apktachgoc.sample.MainActivity
+ThisTime: 1709
+TotalTime: 1709
+WaitTime: 1788
+Complete
+PASS: cài song song; dữ liệu riêng; bản sao giữ dữ liệu sau gỡ bản gốc và công cụ.

@@ -8,7 +8,7 @@
 
    https://goo.gle/TrustAllX509TrustManager
 
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:244: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:249: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
             try { startActivityForResult(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")), 104) }
                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/ProcessingService.kt:49: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
@@ -71,76 +71,76 @@
    </lint>
    ```
 
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:88: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:90: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             signRadio = RadioButton(this).apply { id = View.generateViewId(); text = "Ký lại APK"; minHeight = dp(48); modes.addView(this); inputs += this }
                                                                                       ~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:89: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:91: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             cloneRadio = RadioButton(this).apply { id = View.generateViewId(); text = "Tạo bản tách gốc"; minHeight = dp(48); modes.addView(this); inputs += this }
                                                                                        ~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:118: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:120: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
             inputs += button(c, "Xem mã nhận diện khóa") { localWork("Đang mở khóa ký…") { val id = KeyVault.get(this); runOnUiThread { keyInfo.text = "SHA-256 chứng chỉ:\n${id.fingerprint}" } } }
                                                                                                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:118: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:120: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             inputs += button(c, "Xem mã nhận diện khóa") { localWork("Đang mở khóa ký…") { val id = KeyVault.get(this); runOnUiThread { keyInfo.text = "SHA-256 chứng chỉ:\n${id.fingerprint}" } } }
                                                                                                                                                         ~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:144: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:147: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
             metadata.text = "${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}" + if (state.info.nativeCode) "\nCó mã native • chỉ ký lại ở bản đầu" else ""
                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:144: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:147: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
             metadata.text = "${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}" + if (state.info.nativeCode) "\nCó mã native • chỉ ký lại ở bản đầu" else ""
                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:144: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:147: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             metadata.text = "${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}" + if (state.info.nativeCode) "\nCó mã native • chỉ ký lại ở bản đầu" else ""
                                             ~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:146: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:149: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                 if (seenInput != null || label.text.isBlank()) label.setText("${state.name} • Bản riêng".take(80))
                                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:146: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:149: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                 if (seenInput != null || label.text.isBlank()) label.setText("${state.name} • Bản riêng".take(80))
                                                                                            ~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:147: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:150: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                 if (seenInput != null || packageNameField.text.isBlank()) packageNameField.setText(state.info.packageName.lowercase() + ".tachgoc")
                                                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:147: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:150: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                 if (seenInput != null || packageNameField.text.isBlank()) packageNameField.setText(state.info.packageName.lowercase() + ".tachgoc")
                                                                                                                                          ~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:150: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:153: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
         } else metadata.text = "Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại."
                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:150: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:153: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
         } else metadata.text = "Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại."
                                 ~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:150: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:153: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
         } else metadata.text = "Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại."
                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:151: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:154: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
         if (!uiBusy) status.text = (if (state.busy) "${state.percent}% • " else "") + state.status
                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:161: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
             result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:161: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
             result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:161: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
                            ~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:161: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
                                                                       ~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:161: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
                                                                                                                      ~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:161: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
                                                                                                                           ~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:161: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
                                                                                                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:203: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:207: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                     try { val identity = SigningKeys.import(bytes, password); KeyVault.save(this, identity); runOnUiThread { keyInfo.text = "Đã nhập khóa. SHA-256:\n${identity.fingerprint}"; message("Đã nhập khóa", "Khóa này sẽ dùng cho các lần ký tiếp theo. Bản sao cũ chỉ cập nhật được bằng đúng khóa đã dùng trước đó.") } }
                                                                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:203: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:207: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                     try { val identity = SigningKeys.import(bytes, password); KeyVault.save(this, identity); runOnUiThread { keyInfo.text = "Đã nhập khóa. SHA-256:\n${identity.fingerprint}"; message("Đã nhập khóa", "Khóa này sẽ dùng cho các lần ký tiếp theo. Bản sao cũ chỉ cập nhật được bằng đúng khóa đã dùng trước đó.") } }
                                                                                                                                              ~~~~~~~~~~~~~~~~~~~~~~
 

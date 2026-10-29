@@ -10,6 +10,17 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 class OnDeviceTest {
+    @Test fun vaultRecoversInterruptedWriteWithoutReplacingKey() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val identity = KeyVault.get(context)
+        val file = File(context.noBackupFilesDir, "signing-key.aes")
+        val backup = File(file.path + ".bak")
+        backup.delete()
+        assertTrue(file.renameTo(backup))
+        assertEquals(identity.fingerprint, KeyVault.get(context).fingerprint)
+        assertTrue(file.exists())
+        assertFalse(backup.exists())
+    }
     @Test fun createSignCloneAndRoundTripVaultOnAndroid() {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val context = instrumentation.targetContext

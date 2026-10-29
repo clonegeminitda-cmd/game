@@ -26,7 +26,7 @@ Gỡ công cụ xóa khóa lưu nội bộ và các APK chưa xuất. Ứng dụ
 
 - Nhận APK đơn hoàn chỉnh, DEX tiêu chuẩn, gồm cả nhiều DEX. Giới hạn tệp 512 MB, mỗi mục ZIP 200 MB, tổng giải nén 1 GB và 40.000 mục; giới hạn RAM của điện thoại vẫn có thể thấp hơn.
 - Đọc/sửa manifest và tài nguyên nhị phân bằng ARSCLib. Giữ namespace lớp DEX và chuyển tên lớp tương đối sang tên đầy đủ trước khi đổi package.
-- Tạo bảng ánh xạ cho package, provider authorities (kể cả authority không bắt đầu bằng package), quyền do app khai báo, task affinity, process toàn cục, action/category/scheme thuộc package cũ. Sửa các giá trị định danh khớp toàn bộ và authority có ranh giới trong URI `content://`; sửa hằng chuỗi trong DEX, static values/annotations và tài nguyên. Không thay thế chuỗi con hàng loạt trong mã hoặc dữ liệu.
+- Tạo bảng ánh xạ cho package, provider authorities (kể cả authority không bắt đầu bằng package), quyền do app khai báo, account type trong XML authenticator/sync adapter, task affinity, process toàn cục, action/category/scheme thuộc package cũ. Sửa các giá trị định danh khớp toàn bộ và authority có ranh giới trong URI `content://`; sửa hằng chuỗi trong DEX, static values/annotations và tài nguyên. DEX thư viện không chứa giá trị cần đổi được giữ nguyên từng byte. Không thay thế chuỗi con hàng loạt trong mã hoặc dữ liệu.
 - Xóa chữ ký cũ, đóng gói/căn chỉnh ZIP, ký v1/v2/v3 bằng apksig, rồi xác minh chữ ký v2, chứng chỉ, manifest, phiên bản, CRC và SHA-256 đầu vào. Kết quả chỉ được đổi tên thành APK cuối sau khi qua kiểm tra. Tệp lỗi không được công bố là thành công.
 - Từ chối split/config APK, base có dấu hiệu cần split, APKS/XAPK/AAB, sharedUserId, overlay/instrumentation/thư viện chia sẻ, nhiều package tài nguyên, tên lớp/định danh manifest qua tham chiếu tài nguyên chưa hỗ trợ.
 - **Chưa tách gốc APK chứa `.so`**, mã nhúng hoặc asset/raw có định danh gốc cần bộ xử lý riêng. Chế độ ký lại hỗ trợ giữ mã native và căn chỉnh thư viện không nén 16 KB; không sửa ELF hay đảm bảo thư viện tương thích mọi thiết bị 16 KB.
@@ -51,7 +51,9 @@ APK công cụ: `app/build/outputs/apk/debug/app-debug.apk`.
 ./gradlew :app:connectedDebugAndroidTest
 ```
 
-Phần này thử Android Keystore, PKCS#12 và tạo APK clone/ký lại trên Android. App mẫu và APK do điện thoại tạo được lưu dưới `Android/data/vn.apktachgoc/files/device-test/`. `scripts/device-smoke.sh` dùng các tệp đó để cài song song, ghi hai marker riêng, mở hai app, gỡ bản gốc rồi gỡ công cụ, và kiểm tra dữ liệu của bản sao. Script mặc định chỉ chạy trên emulator để tránh xóa khóa của công cụ đang dùng trên máy thật.
+Phần này thử Android Keystore, PKCS#12 và tạo APK clone/ký lại trên Android. App mẫu và APK do điện thoại tạo được lưu dưới `Android/data/vn.apktachgoc/files/device-test/`. `scripts/device-smoke.sh` (cần Bash, adb và ripgrep) dùng các tệp đó để cài song song, ghi hai marker riêng, kiểm tra UID riêng, mở hai app, gỡ bản gốc rồi gỡ công cụ, và kiểm tra dữ liệu của bản sao. Script mặc định chỉ chạy trên emulator để tránh xóa khóa của công cụ đang dùng trên máy thật.
+
+`downloads/mau-goc.apk` và `mau-tach-goc.apk` là app thử nghiệm. Bản mẫu tách gốc ký sẵn dùng khóa thử riêng. Để thử tạo bản cập nhật, hãy tự tạo bản sao từ `mau-goc.apk` bằng khóa của công cụ trên điện thoại bạn.
 
 Kết quả kiểm thử của bản bàn giao nằm trong `TEST-REPORT.md`, kèm log đã chạy. Không suy diễn kiểm tra JVM thành kết quả chạy trên Android.
 

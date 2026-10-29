@@ -1,0 +1,2 @@
+package:vn.apktachgoc.sample.tachgoc
+package:vn.apktachgoc.test

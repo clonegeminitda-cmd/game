@@ -1,0 +1,37 @@
+package vn.apktachgoc
+
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.Assert.*
+import vn.apktachgoc.core.*
+import java.io.File
+
+@RunWith(AndroidJUnit4::class)
+class OnDeviceTest {
+    @Test fun createSignCloneAndRoundTripVaultOnAndroid() {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val context = instrumentation.targetContext
+        val folder = File(context.getExternalFilesDir(null), "device-test").apply { mkdirs() }
+        val input = File(folder, "sample-original.apk")
+        instrumentation.context.assets.open("sample-debug.apk").use { source -> input.outputStream().use { source.copyTo(it) } }
+        val hash = ApkEngine.sha256(input)
+        val identity = KeyVault.get(context)
+        assertEquals(identity.fingerprint, KeyVault.get(context).fingerprint)
+        val exported = SigningKeys.export(identity, "device-test-password-2026".toCharArray())
+        val restored = SigningKeys.import(exported, "device-test-password-2026".toCharArray())
+        assertEquals(identity.fingerprint, restored.fingerprint)
+        KeyVault.save(context, restored)
+        assertEquals(identity.fingerprint, KeyVault.get(context).fingerprint)
+        val output = File(folder, "sample-clone.apk").apply { delete() }
+        val result = ApkEngine.build(input, output, Mode.CLONE, "vn.apktachgoc.sample.tachgoc", "Mẫu • Bản riêng", KeyVault.get(context))
+        assertTrue(output.exists()); assertEquals("vn.apktachgoc.sample.tachgoc", ApkEngine.inspect(output).packageName)
+        assertEquals(hash, ApkEngine.sha256(input))
+        assertEquals(identity.fingerprint, result.certificateSha256)
+        val resigned = File(folder, "sample-resigned.apk").apply { delete() }
+        ApkEngine.build(input, resigned, Mode.RESIGN, "", "", identity)
+        assertEquals("vn.apktachgoc.sample", ApkEngine.inspect(resigned).packageName)
+        File(folder, "result.txt").writeText("PASS: Android Keystore AES-GCM, PKCS#12 export/import, clone/re-sign on Android, input unchanged.\nClone SHA256=${result.sha256}\nCertificate=${identity.fingerprint}\n")
+    }
+}

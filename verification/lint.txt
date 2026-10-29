@@ -1,0 +1,160 @@
+/workspace/work/gradle-home/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15to18/1.78.1/5884ee847542641d04abfbfdeca3446d0300670b/bcpkix-jdk15to18-1.78.1.jar: Warning: checkServerTrusted is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers [TrustAllX509TrustManager]
+
+   Explanation for issues of type "TrustAllX509TrustManager":
+   This check looks for X509TrustManager implementations whose
+   checkServerTrusted or checkClientTrusted methods do nothing (thus trusting
+   any certificate chain) which could result in insecure network traffic
+   caused by trusting arbitrary TLS/SSL certificates presented by peers.
+
+   https://goo.gle/TrustAllX509TrustManager
+
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:244: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+            try { startActivityForResult(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")), 104) }
+                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/ProcessingService.kt:49: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+                    "INSPECT" -> inspect(Uri.parse(intent.getStringExtra("uri")))
+                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/ProcessingService.kt:100: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        getSharedPreferences("last", MODE_PRIVATE).edit().putString("path", output.path).putString("package", target).putString("hash", report.sha256).putString("cert", identity.fingerprint).apply()
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseKtx":
+   The Android KTX libraries decorates the Android platform SDK as well as
+   various libraries with more convenient extension functions available from
+   Kotlin, allowing you to use default parameters, named parameters, and
+   more.
+
+   Available options:
+
+   **remove-defaults** (default is true):
+   Whether to skip arguments that match the defaults provided by the extension.
+
+   Extensions often provide default values for some of the parameters. For example:
+   ```kotlin
+   fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String> { return Files.readAllLines(this, charset) }
+   ```
+   This lint check will by default automatically omit parameters that match the default, so if your code was calling ```kotlin
+   Files.readAllLines(file, Charset.UTF_8)
+   ```
+   lint would replace this with
+   ```kotlin
+   file.readLines()
+   ```
+   rather than
+   ```kotlin
+   file.readLines(Charset.UTF_8
+   ```
+   You can turn this behavior off using this option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="remove-defaults" value="true" />
+       </issue>
+   </lint>
+   ```
+
+   **require-present** (default is true):
+   Whether to only offer extensions already available.
+
+   This option lets you only have lint suggest extension replacements if those extensions are already available on the class path (in other words, you're already depending on the library containing the extension method.)
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="require-present" value="true" />
+       </issue>
+   </lint>
+   ```
+
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:88: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            signRadio = RadioButton(this).apply { id = View.generateViewId(); text = "Ký lại APK"; minHeight = dp(48); modes.addView(this); inputs += this }
+                                                                                      ~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:89: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            cloneRadio = RadioButton(this).apply { id = View.generateViewId(); text = "Tạo bản tách gốc"; minHeight = dp(48); modes.addView(this); inputs += this }
+                                                                                       ~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:118: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            inputs += button(c, "Xem mã nhận diện khóa") { localWork("Đang mở khóa ký…") { val id = KeyVault.get(this); runOnUiThread { keyInfo.text = "SHA-256 chứng chỉ:\n${id.fingerprint}" } } }
+                                                                                                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:118: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            inputs += button(c, "Xem mã nhận diện khóa") { localWork("Đang mở khóa ký…") { val id = KeyVault.get(this); runOnUiThread { keyInfo.text = "SHA-256 chứng chỉ:\n${id.fingerprint}" } } }
+                                                                                                                                                        ~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:144: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            metadata.text = "${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}" + if (state.info.nativeCode) "\nCó mã native • chỉ ký lại ở bản đầu" else ""
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:144: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            metadata.text = "${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}" + if (state.info.nativeCode) "\nCó mã native • chỉ ký lại ở bản đầu" else ""
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:144: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            metadata.text = "${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}" + if (state.info.nativeCode) "\nCó mã native • chỉ ký lại ở bản đầu" else ""
+                                            ~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:146: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                if (seenInput != null || label.text.isBlank()) label.setText("${state.name} • Bản riêng".take(80))
+                                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:146: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                if (seenInput != null || label.text.isBlank()) label.setText("${state.name} • Bản riêng".take(80))
+                                                                                           ~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:147: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                if (seenInput != null || packageNameField.text.isBlank()) packageNameField.setText(state.info.packageName.lowercase() + ".tachgoc")
+                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:147: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                if (seenInput != null || packageNameField.text.isBlank()) packageNameField.setText(state.info.packageName.lowercase() + ".tachgoc")
+                                                                                                                                         ~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:150: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+        } else metadata.text = "Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại."
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:150: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        } else metadata.text = "Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại."
+                                ~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:150: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        } else metadata.text = "Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại."
+                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:151: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+        if (!uiBusy) status.text = (if (state.busy) "${state.percent}% • " else "") + state.status
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
+                           ~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
+                                                                      ~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
+                                                                                                                     ~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
+                                                                                                                          ~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
+                                                                                                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:203: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                    try { val identity = SigningKeys.import(bytes, password); KeyVault.save(this, identity); runOnUiThread { keyInfo.text = "Đã nhập khóa. SHA-256:\n${identity.fingerprint}"; message("Đã nhập khóa", "Khóa này sẽ dùng cho các lần ký tiếp theo. Bản sao cũ chỉ cập nhật được bằng đúng khóa đã dùng trước đó.") } }
+                                                                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt:203: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                    try { val identity = SigningKeys.import(bytes, password); KeyVault.save(this, identity); runOnUiThread { keyInfo.text = "Đã nhập khóa. SHA-256:\n${identity.fingerprint}"; message("Đã nhập khóa", "Khóa này sẽ dùng cho các lần ký tiếp theo. Bản sao cũ chỉ cập nhật được bằng đúng khóa đã dùng trước đó.") } }
+                                                                                                                                             ~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SetTextI18n":
+   When calling TextView#setText
+   * Never call Number#toString() to format numbers; it will not handle
+   fraction separators and locale-specific digits properly. Consider using
+   String#format with proper format specifications (%d or %f) instead.
+   * Do not pass a string literal (e.g. "Hello") to display text. Hardcoded
+   text can not be properly translated to other languages. Consider using
+   Android resource strings instead.
+   * Do not build messages by concatenating text chunks. Such messages can not
+   be properly translated.
+
+   https://developer.android.com/guide/topics/resources/localization.html
+
+0 errors, 28 warnings

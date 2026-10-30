@@ -72,7 +72,7 @@ object ApkEngine {
             }) { "Đây là split APK hoặc base APK cần split. Hãy chọn APK đơn đầy đủ; bản đầu chưa ghép split." }
             require(attr(root, "sharedUserId") == null) { "APK dùng sharedUserId; ký mới có thể xung đột UID. Chưa hỗ trợ." }
             require(all.none { it.name in setOf("overlay", "instrumentation", "static-library", "sdk-library", "uses-static-library", "uses-sdk-library") }) { "APK hệ thống, overlay, instrumentation hoặc thư viện chia sẻ chưa được hỗ trợ." }
-            require(module.hasTableBlock().not() || module.tableBlock.size() == 1) { "APK có nhiều package tài nguyên; chưa hỗ trợ." }
+            require(module.hasTableBlock().not() || module.tableBlock.size() <= 1) { "APK có nhiều package tài nguyên; chưa hỗ trợ." }
             val pkg = manifest.packageName ?: error("Thiếu package name.")
             require(pkg.length in 3..223 && Regex("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)+").matches(pkg)) { "Package của APK đầu vào không hợp lệ; không thể tạo APK cài được." }
             return ApkInfo(pkg, manifest.versionName ?: "?", manifest.versionCode ?: 0, manifest.minSdkVersion ?: 1, native)
@@ -86,10 +86,11 @@ object ApkEngine {
         if (mode == Mode.CLONE) {
             require(validPackage(newPackage) && newPackage != info.packageName) { "Package mới phải khác bản gốc, gồm các đoạn chữ thường, số, dấu gạch dưới, phân cách bằng dấu chấm." }
             require(label.isNotBlank() && label.length <= 80) { "Tên bản sao cần từ 1 đến 80 ký tự." }
-            require(!info.nativeCode) { "APK chứa thư viện native (.so). Bản đầu chưa tách gốc native vì chưa thể sửa định danh bên trong; có thể dùng Ký lại APK." }
+            require(!info.nativeCode) { "Đang chọn Tạo bản tách gốc, nhưng APK có thư viện .so. Hãy chọn Ký lại APK để giữ nguyên thư viện native và package; APK ký lại không tạo bản cài song song." }
         }
         val target = if (mode == Mode.CLONE) newPackage else info.packageName
         val changes = mutableListOf<String>()
+        if (mode == Mode.RESIGN) changes += "Ký lại APK: giữ nguyên package ${info.packageName}; không tạo bản cài song song."
         val temp = File(output.parentFile, output.name + ".unsigned")
         val pending = File(output.parentFile, output.name + ".pending")
         output.parentFile?.mkdirs()
@@ -103,7 +104,7 @@ object ApkEngine {
                 if (mode == Mode.CLONE) rewrite(module, info.packageName, newPackage, label, changes, progress)
                 progress(65, "Đóng gói và căn chỉnh ZIP")
                 module.createApkFileWriter(temp).apply {
-                    zipAligner = ZipAligner().apply { setDefaultAlignment(4); setFileAlignment(java.util.function.Predicate { it.endsWith(".so") }, 16384) }
+                    zipAligner = ZipAligner().apply { setDefaultAlignment(4); setFileAlignment(java.util.function.Predicate { it.endsWith(".so", true) }, 16384) }
                 }.write()
             }
             progress(78, "Ký APK v1 / v2 / v3")
@@ -121,12 +122,31 @@ object ApkEngine {
                 zip.getInputStream(entry).use { stream -> val b = ByteArray(65536); while (true) { val n = stream.read(b); if (n < 0) break; crc.update(b, 0, n) } }
                 require(crc.value == entry.crc) { "CRC không khớp: ${entry.name}" }
             } }
+            if (mode == Mode.RESIGN && info.nativeCode) {
+                progress(94, "Đối chiếu SHA-256 từng thư viện native (.so)")
+                val nativeCount = verifyNativePreserved(input, pending)
+                changes += "Đã đối chiếu SHA-256: giữ nguyên nội dung $nativeCount thư viện .so, căn chỉnh ZIP cho thư viện không nén ở biên 16 KB."
+            }
             require(sha256(input) == originalHash) { "APK đầu vào đã thay đổi trong lúc xử lý." }
             require(!output.exists()) { "Tên đầu ra đã tồn tại; hãy tạo tên khác." }
             require(pending.renameTo(output)) { "Không thể hoàn tất tệp đầu ra." }
             progress(100, "Đã xác minh APK; cần cài thử để kiểm tra hành vi ứng dụng")
             return BuildReport(output, target, sha256(output), changes, identity.fingerprint)
         } finally { temp.delete(); pending.delete() }
+    }
+    private fun verifyNativePreserved(input: File, signed: File): Int = ZipFile(input).use { original ->
+        ZipFile(signed).use { result ->
+            fun names(zip: ZipFile) = zip.entries().asSequence().filter { !it.isDirectory && it.name.endsWith(".so", true) }.map { it.name }.toSet()
+            val expected = names(original)
+            require(names(result) == expected) { "Danh sách thư viện native bị thay đổi; không xuất APK." }
+            fun hash(zip: ZipFile, name: String): ByteArray = zip.getInputStream(zip.getEntry(name)).use { stream ->
+                val digest = MessageDigest.getInstance("SHA-256"); val buffer = ByteArray(65536)
+                while (true) { val count = stream.read(buffer); if (count < 0) break; digest.update(buffer, 0, count) }
+                digest.digest()
+            }
+            expected.forEach { name -> require(MessageDigest.isEqual(hash(original, name), hash(result, name))) { "Thư viện $name đã thay đổi ngoài dự kiến; không xuất APK." } }
+            expected.size
+        }
     }
     private fun rewrite(module: ApkModule, old: String, new: String, label: String, changes: MutableList<String>, progress: (Int, String) -> Unit) {
         val manifest = module.androidManifest

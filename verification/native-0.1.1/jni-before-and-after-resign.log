@@ -1,0 +1,25 @@
+/sdcard/Android/data/vn.apktachgoc/files/device-native-test/./: 3 files pulled, 0 skipped. 17.4 MB/s (1744266 bytes in 0.096s)
+Performing Streamed Install
+Success
+Starting: Intent { cmp=vn.apktachgoc.nativesample/.MainActivity }
+Status: ok
+Activity: vn.apktachgoc.nativesample/.MainActivity
+ThisTime: 2700
+TotalTime: 2700
+WaitTime: 2894
+Complete
+UI hierchary dumped to: /sdcard/native-original-ui.xml
+/sdcard/native-original-ui.xml: 1 file pulled, 0 skipped. 0.0 MB/s (2333 bytes in 0.047s)
+Success
+Performing Streamed Install
+Success
+Starting: Intent { cmp=vn.apktachgoc.nativesample/.MainActivity }
+Status: ok
+Activity: vn.apktachgoc.nativesample/.MainActivity
+ThisTime: 1303
+TotalTime: 1303
+WaitTime: 1448
+Complete
+UI hierchary dumped to: /sdcard/native-resigned-ui.xml
+/sdcard/native-resigned-ui.xml: 1 file pulled, 0 skipped. 0.0 MB/s (2333 bytes in 0.047s)
+PASS: app mẫu gọi thư viện ELF/JNI thật trước và sau ký lại; cùng package, khác chữ ký không cập nhật đè bản gốc.

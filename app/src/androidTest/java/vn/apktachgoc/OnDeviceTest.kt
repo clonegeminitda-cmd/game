@@ -7,9 +7,29 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 import vn.apktachgoc.core.*
 import java.io.File
+import java.util.zip.ZipFile
 
 @RunWith(AndroidJUnit4::class)
 class OnDeviceTest {
+    @Test fun resignRealNativeApkOnAndroid() {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val context = instrumentation.targetContext
+        val folder = File(context.getExternalFilesDir(null), "device-native-test").apply { mkdirs() }
+        val input = File(folder, "native-original.apk")
+        instrumentation.context.assets.open("native-sample-debug.apk").use { source -> input.outputStream().use { source.copyTo(it) } }
+        val originalHash = ApkEngine.sha256(input)
+        assertTrue(ApkEngine.inspect(input).nativeCode)
+        val output = File(folder, "native-resigned.apk").apply { delete() }
+        val report = ApkEngine.build(input, output, Mode.RESIGN, "", "", KeyVault.get(context))
+        assertEquals("vn.apktachgoc.nativesample", ApkEngine.inspect(output).packageName)
+        assertEquals(originalHash, ApkEngine.sha256(input))
+        ZipFile(input).use { original -> ZipFile(output).use { signed ->
+            val name = "lib/x86_64/libnativefixture.so"
+            assertArrayEquals(original.getInputStream(original.getEntry(name)).readBytes(), signed.getInputStream(signed.getEntry(name)).readBytes())
+        } }
+        assertTrue(report.changes.any { it.contains("thư viện .so") })
+        File(folder, "result.txt").writeText("PASS: ký lại APK native trên Android; giữ nguyên package và từng byte .so.\nInput SHA256=$originalHash\nOutput SHA256=${report.sha256}\nCertificate=${report.certificateSha256}\n${report.changes.joinToString("\n")}\n")
+    }
     @Test fun vaultRecoversInterruptedWriteWithoutReplacingKey() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val identity = KeyVault.get(context)

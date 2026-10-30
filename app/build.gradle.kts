@@ -2,7 +2,7 @@ plugins { id("com.android.application"); kotlin("android") }
 android {
     namespace = "vn.apktachgoc"
     compileSdk = 35
-    defaultConfig { applicationId = "vn.apktachgoc"; minSdk = 26; targetSdk = 35; versionCode = 1; versionName = "0.1.0"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+    defaultConfig { applicationId = "vn.apktachgoc"; minSdk = 26; targetSdk = 35; versionCode = 2; versionName = "0.1.1"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_1_8; targetCompatibility = JavaVersion.VERSION_1_8; isCoreLibraryDesugaringEnabled = true }
     kotlinOptions { jvmTarget = "1.8" }
     packaging { resources.excludes += setOf("META-INF/versions/**", "META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA", "META-INF/DEPENDENCIES", "META-INF/LICENSE*", "META-INF/NOTICE*") }
@@ -16,8 +16,9 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
 }
 val sampleTestAssets by tasks.registering(Copy::class) {
-    dependsOn(":sample:assembleDebug")
+    dependsOn(":sample:assembleDebug", ":native-sample:assembleDebug")
     from(project(":sample").layout.buildDirectory.file("outputs/apk/debug/sample-debug.apk"))
+    from(project(":native-sample").layout.buildDirectory.file("outputs/apk/debug/native-sample-debug.apk"))
     into(layout.buildDirectory.dir("generated/test-assets"))
 }
 tasks.configureEach { if (name == "mergeDebugAndroidTestAssets" || name == "generateDebugAndroidTestLintModel" || name == "lintAnalyzeDebugAndroidTest") dependsOn(sampleTestAssets) }

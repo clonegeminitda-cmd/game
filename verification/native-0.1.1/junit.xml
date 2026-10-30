@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="vn.apktachgoc.core.EngineTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-29T23:52:02" hostname="fce5e3d0dff8" time="7.623">
+  <properties/>
+  <testcase name="resignRealNativeApkPreservesElfAndEveryDex" classname="vn.apktachgoc.core.EngineTest" time="1.531"/>
+  <testcase name="refusesSplitAndRequiredSplitBase" classname="vn.apktachgoc.core.EngineTest" time="0.579"/>
+  <testcase name="refusesUnresolvedAssetAndCleansTemporaryFiles" classname="vn.apktachgoc.core.EngineTest" time="0.708"/>
+  <testcase name="refusesNativeCloneWithoutPublishingOutput" classname="vn.apktachgoc.core.EngineTest" time="0.506"/>
+  <testcase name="rejectsMalformedInputPackage" classname="vn.apktachgoc.core.EngineTest" time="0.28"/>
+  <testcase name="cloneRealSampleAndVerifyReferences" classname="vn.apktachgoc.core.EngineTest" time="0.734"/>
+  <testcase name="sameKeySupportsRepeatedCloneSigning" classname="vn.apktachgoc.core.EngineTest" time="0.597"/>
+  <testcase name="resignPreservesPackageAndDex" classname="vn.apktachgoc.core.EngineTest" time="0.782"/>
+  <testcase name="rejectsOverwriteAndInvalidPackage" classname="vn.apktachgoc.core.EngineTest" time="0.395"/>
+  <testcase name="encryptedKeyRoundTripAndWrongPassword" classname="vn.apktachgoc.core.EngineTest" time="1.509"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,10 +1,16 @@
-# APK Tách Gốc 0.1.0
+# APK Tách Gốc 0.1.1
 
 Ứng dụng Android viết bằng Kotlin, giao diện tiếng Việt, chạy hoàn toàn trên điện thoại và không cần root. Đây là bản APK cài thử (debug). Không có quyền Internet và không gửi APK hoặc khóa ký lên máy chủ.
 
+## Ký lại APK có thư viện .so
+
+Bản 0.1.1 tự chọn **Ký lại APK (hỗ trợ .so)** khi nhận diện mã native. Bấm **Ký lại APK có .so** để tạo tệp đã ký mới. Công cụ giữ nguyên package, DEX và nội dung thư viện native; đối chiếu SHA-256 từng `.so` trước khi công bố kết quả. APK ký lại không phải bản tách gốc và không cài song song với bản gốc cùng package. Android không cho cập nhật đè một app đang cài bằng khóa ký khác.
+
+Cài đè APK công cụ 0.1.1 để cập nhật từ 0.1.0; không cần gỡ công cụ cũ. Khóa ký lưu trên máy tiếp tục được sử dụng.
+
 ## Tải và cài
 
-Mở thư mục `downloads` trên GitHub, chọn `APK-Tach-Goc-0.1.0-test.apk` rồi bấm **Download raw file**. Nếu dùng trang GitHub trên điện thoại, có thể mở liên kết tải trực tiếp trong phần bàn giao.
+Mở thư mục `downloads` trên GitHub, chọn `APK-Tach-Goc-0.1.1-test.apk` rồi bấm **Download raw file**. Nếu dùng trang GitHub trên điện thoại, có thể mở liên kết tải trực tiếp trong phần bàn giao.
 
 1. Cài APK, cho phép trình duyệt/trình quản lý tệp cài ứng dụng từ nguồn này nếu Android hỏi.
 2. Mở **APK Tách Gốc → Chọn file APK**. Ứng dụng đọc tên, phiên bản và package từ bản sao nội bộ; không ghi vào tệp gốc.
@@ -43,7 +49,7 @@ Yêu cầu JDK 21, Android SDK Platform 35 / Build Tools 35.0.0; có Android SDK
 
 APK công cụ: `app/build/outputs/apk/debug/app-debug.apk`.
 
-`core:test` build app mẫu, tạo APK tách gốc thật, kiểm tra provider/quyền/task affinity/tên lớp/tài nguyên/DEX, chữ ký, ký lại, cùng khóa ký, vòng xuất/nhập khóa, mật khẩu sai và các trường hợp bị từ chối. APK mẫu đầu ra nằm ở `core/build/test-artifacts/`.
+`core:test` build app mẫu, tạo APK tách gốc thật, kiểm tra provider/quyền/task affinity/tên lớp/tài nguyên/DEX, chữ ký, ký lại, cùng khóa ký, vòng xuất/nhập khóa, mật khẩu sai và các trường hợp bị từ chối. Có thêm APK mẫu dùng thư viện ELF/JNI thật để kiểm tra giữ nguyên mọi DEX và `.so` sau ký lại, kể cả APK không khai báo tài nguyên riêng. APK mẫu đầu ra nằm ở `core/build/test-artifacts/`.
 
 Để chạy phần kiểm tra xử lý **ngay trong Android** trên thiết bị/emulator đã kết nối:
 
@@ -57,10 +63,17 @@ Phần này thử Android Keystore, PKCS#12 và tạo APK clone/ký lại trên 
 
 Kết quả kiểm thử của bản bàn giao nằm trong `TEST-REPORT.md`, kèm log đã chạy. Không suy diễn kiểm tra JVM thành kết quả chạy trên Android.
 
+## Kiểm thử native
+
+`native-sample/` chứa app mẫu x86_64 có thư viện ELF/JNI thật. Hàm C trả về 73, và giao diện chỉ hiển thị kết quả khi `System.loadLibrary` cùng lời gọi JNI thành công. Thư viện thử đã được biên dịch sẵn và có mã C cùng script `scripts/build-native-fixture.sh` để tái tạo bằng GCC trên Linux x86_64/JDK. Đây là fixture cho emulator x86_64, không phải APK mẫu cho điện thoại ARM; APK công cụ vẫn không giới hạn ABI đầu vào khi ký lại.
+
+Chạy `OnDeviceTest#resignRealNativeApkOnAndroid` để tạo APK ký lại ngay trên Android. Sau đó chạy `scripts/native-smoke.sh` trên emulator để thử nạp JNI trước/sau ký, đồng thời kiểm tra Android từ chối cập nhật app có chữ ký khác. Không dùng script này với dữ liệu thật.
+
 ## Cấu trúc
 
 - `app/`: giao diện tiếng Việt, foreground service, thông báo tiến trình, SAF, chia sẻ/cài APK, kho khóa Android Keystore.
 - `core/`: xử lý ZIP/manifest/tài nguyên/DEX, ký/xác minh và định dạng khóa; dùng lại cùng mã trên JVM và Android.
+- `native-sample/`: app mẫu có `.so` thật, phục vụ kiểm thử ký lại.
 - `sample/`: app mẫu có phiên đăng nhập mô phỏng, provider, quyền riêng và receiver phục vụ thử nghiệm. Receiver chỉ thuộc app mẫu, không có trong công cụ.
 - `scripts/`: kiểm thử cài đặt Android.
 

@@ -1,0 +1,9 @@
+APK Tách Gốc 0.1.1
+Package: vn.apktachgoc.nativesample
+SHA-256: 42c68f1e98944891447cb50e2b8fda8b678d548f3e7f1d501108c25f5396b67d
+Chứng chỉ: 2157660c631e77786091b977fc984f5eaf5f577b8c5a99cc4220cdd120c79004
+
+Ký lại APK: giữ nguyên package vn.apktachgoc.nativesample; không tạo bản cài song song.
+Đã đối chiếu SHA-256: giữ nguyên nội dung 1 thư viện .so, căn chỉnh ZIP cho thư viện không nén ở biên 16 KB.
+
+Đã kiểm tra chữ ký v2, manifest và CRC. Chưa xác nhận ứng dụng này chạy được; hãy cài thử.

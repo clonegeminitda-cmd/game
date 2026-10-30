@@ -97,8 +97,8 @@ class ProcessingService : Service() {
         val output = File(File(filesDir, "results").apply { mkdirs() }, "$target-${System.currentTimeMillis()}.apk")
         val report = ApkEngine.build(input, output, mode, target, intent.getStringExtra("label") ?: "", identity, ::progress)
         records.edit().putString(target, identity.fingerprint).apply()
-        getSharedPreferences("last", MODE_PRIVATE).edit().putString("path", output.path).putString("package", target).putString("hash", report.sha256).putString("cert", identity.fingerprint).apply()
-        File(output.path + ".txt").writeText("APK Tách Gốc 0.1.0\nPackage: $target\nSHA-256: ${report.sha256}\nChứng chỉ: ${identity.fingerprint}\n\n${report.changes.joinToString("\n")}\n\nĐã kiểm tra chữ ký v2, manifest và CRC. Chưa xác nhận ứng dụng này chạy được; hãy cài thử.\n")
+        getSharedPreferences("last", MODE_PRIVATE).edit().putString("path", output.path).putString("package", target).putString("hash", report.sha256).putString("cert", identity.fingerprint).putString("changes", report.changes.joinToString("\n")).apply()
+        File(output.path + ".txt").writeText("APK Tách Gốc 0.1.1\nPackage: $target\nSHA-256: ${report.sha256}\nChứng chỉ: ${identity.fingerprint}\n\n${report.changes.joinToString("\n")}\n\nĐã kiểm tra chữ ký v2, manifest và CRC. Chưa xác nhận ứng dụng này chạy được; hãy cài thử.\n")
         AppState.update { it.copy(report = report, error = null, status = "Đã tạo APK và xác minh chữ ký", percent = 100) }
     }
     override fun onDestroy() { worker.shutdown(); super.onDestroy() }

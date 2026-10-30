@@ -1,0 +1,3 @@
+Performing Streamed Install
+adb: failed to install /workspace/work/native-device-output/native-resigned.apk: Failure [INSTALL_FAILED_UPDATE_INCOMPATIBLE: Package vn.apktachgoc.nativesample signatures do not match the previously installed version; ignoring!]
+

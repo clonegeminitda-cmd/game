@@ -65,6 +65,26 @@ class EngineTest {
         assertEquals(original, ApkEngine.inspect(file).packageName)
         ZipFile(sample).use { a -> ZipFile(file).use { b -> assertContentEquals(a.getInputStream(a.getEntry("classes.dex")).readBytes(), b.getInputStream(b.getEntry("classes.dex")).readBytes()) } }
     }
+    @Test fun resignRealNativeApkPreservesElfAndEveryDex() {
+        val input = File(System.getProperty("nativeApk"))
+        val before = ApkEngine.sha256(input)
+        val info = ApkEngine.inspect(input)
+        assertTrue(info.nativeCode)
+        val output = fresh("native-resigned.apk")
+        val report = ApkEngine.build(input, output, Mode.RESIGN, "", "", identity)
+        assertEquals(info.packageName, ApkEngine.inspect(output).packageName)
+        assertEquals(before, ApkEngine.sha256(input))
+        ZipFile(input).use { original -> ZipFile(output).use { signed ->
+            val names = original.entries().asSequence().map { it.name }.filter { it.endsWith(".so") || Regex("classes([0-9]+)?\\.dex").matches(it) }.toList()
+            assertTrue(names.any { it.endsWith(".so") })
+            names.forEach { name -> assertContentEquals(original.getInputStream(original.getEntry(name)).readBytes(), signed.getInputStream(signed.getEntry(name)).readBytes(), name) }
+            assertEquals(java.util.zip.ZipEntry.STORED, signed.getEntry("lib/x86_64/libnativefixture.so").method)
+        } }
+        assertTrue(ApkVerifier.Builder(output).build().verify().isVerified)
+        assertTrue(report.changes.any { it.contains("thư viện .so") && it.contains("SHA-256") })
+        assertTrue(report.changes.any { it.contains("không tạo bản cài song song") })
+        input.copyTo(File(out, "native-original.apk"), overwrite = true)
+    }
     @Test fun sameKeySupportsRepeatedCloneSigning() {
         val a = ApkEngine.build(sample, fresh("update-a.apk"), Mode.CLONE, target, "A", identity)
         val b = ApkEngine.build(sample, fresh("update-b.apk"), Mode.CLONE, target, "B", identity)

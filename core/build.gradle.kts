@@ -8,4 +8,8 @@ dependencies {
     api("org.bouncycastle:bcpkix-jdk15to18:1.78.1")
     testImplementation(kotlin("test-junit"))
 }
-tasks.test { dependsOn(":sample:assembleDebug"); systemProperty("sampleApk", rootProject.file("sample/build/outputs/apk/debug/sample-debug.apk")) }
+tasks.test {
+    dependsOn(":sample:assembleDebug", ":native-sample:assembleDebug")
+    systemProperty("sampleApk", rootProject.file("sample/build/outputs/apk/debug/sample-debug.apk"))
+    systemProperty("nativeApk", rootProject.file("native-sample/build/outputs/apk/debug/native-sample-debug.apk"))
+}

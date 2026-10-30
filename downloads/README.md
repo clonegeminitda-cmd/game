@@ -1,6 +1,12 @@
-# APK Tách Gốc 0.3.0
+# APK Tách Gốc 0.3.1
 
 Ứng dụng Android viết bằng Kotlin, giao diện tiếng Việt, chạy hoàn toàn trên điện thoại và không cần root. Đây là bản APK cài thử (debug). Không có quyền Internet và không gửi APK hoặc khóa ký lên máy chủ.
+
+## Kết quả sau khi lần tạo mới bị lỗi
+
+Bản 0.3.1 sửa lỗi 0.3.0 có thể hiển thị APK ký lại cũ bên dưới thông báo lần tạo mới thất bại. Khi bắt đầu đọc/quét/tạo mới, công cụ bỏ con trỏ kết quả cũ; nếu chưa có kết quả mới thì ẩn thông tin APK và vô hiệu hóa nút lưu/chia sẻ/cài. Không xóa APK đã tạo, file đầu vào hay khóa ký. Khi mở lại, kết quả cũ còn trong bộ nhớ đệm của 0.3.0 cũng không được khôi phục nếu lịch sử cho thấy phiên mới hơn chưa tạo thành công.
+
+Màn hình lỗi hiển thị tối đa 8 lỗi chặn đầu tiên kèm tệp/thuộc tính, và nút **Sao chép báo cáo lỗi lần này** ngay bên dưới. Nút này sao chép đúng phiên đang báo lỗi, gồm danh sách phát hiện đầy đủ được lưu; không cần chọn lại một phiên Đọc APK trong lịch sử. Các giới hạn xử lý native/game giữ nguyên; sửa hiển thị không có nghĩa đã sửa lỗi của một game chưa có báo cáo chi tiết.
 
 ## Kiểm tra toàn bộ và lịch sử sao chép
 
@@ -18,11 +24,11 @@ Bản này mặc định chọn **Tạo bản tách gốc — cài song song**, 
 
 Tách gốc native hỗ trợ thư viện không cần sửa định danh bên trong: giữ nguyên namespace lớp/JNI và mọi byte `.so`, đổi định danh Android trong manifest/tài nguyên/DEX. Kiểm tra ELF/ABI và quét các định danh đã biết dạng UTF-8, UTF-16LE/BE, gồm dạng package dùng dấu `/`. Chỉ miễn trừ tên lớp thật có trong DEX, vì đổi namespace lớp sẽ phá JNI. Nếu phát hiện định danh native còn cần sửa, công cụ từ chối và nêu tên thư viện; không tự chuyển sang ký lại. Kiểm tra tĩnh không chứng minh ứng dụng chạy được, không phát hiện được mọi chuỗi mã hóa hoặc định danh tạo lúc chạy. **Chưa kiểm thử Liên Quân**, vì chưa có APK gốc của người dùng.
 
-Cài đè APK công cụ 0.3.0 để cập nhật từ bản cũ; không gỡ công cụ cũ để giữ khóa ký.
+Cài đè APK công cụ 0.3.1 để cập nhật từ bản cũ; không gỡ công cụ cũ để giữ khóa ký.
 
 ## Tải và cài
 
-Mở thư mục `downloads` trên GitHub, chọn `APK-Tach-Goc-0.3.0-test.apk` rồi bấm **Download raw file**.
+Mở thư mục `downloads` trên GitHub, chọn `APK-Tach-Goc-0.3.1-test.apk` rồi bấm **Download raw file**.
 
 1. Cài APK, cho phép trình duyệt/trình quản lý tệp cài ứng dụng từ nguồn này nếu Android hỏi.
 2. Mở **APK Tách Gốc → Chọn file APK**. Ứng dụng đọc tên, phiên bản và package từ bản sao nội bộ; không ghi vào tệp gốc.

@@ -1,0 +1,2 @@
+PASS: ký lại thành công rồi tách gốc lỗi 2 điều kiện; không hiện/hash/cài kết quả cũ; hiện đúng 2 lỗi và nút sao chép trực tiếp; clipboard khớp báo cáo; mở lại vẫn không khôi phục kết quả cũ; giữ nguyên APK đã tạo và khóa ký.
+Previous APK SHA256=66cb01dd0a5e6c497edd2587afe52fd4a5e05365ff475aee244102e3e89c8e88

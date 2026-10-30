@@ -38,6 +38,7 @@ class MainActivity : Activity() {
     private lateinit var cloneRadio: RadioButton
     private lateinit var buildButton: Button
     private lateinit var auditButton: Button
+    private lateinit var copyFailureButton: Button
     private val inputs = mutableListOf<View>()
     private val outputButtons = mutableListOf<Button>()
     private val worker = Executors.newSingleThreadExecutor()
@@ -76,7 +77,7 @@ class MainActivity : Activity() {
         frame.setOnApplyWindowInsetsListener { v, insets -> v.setPadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight, insets.systemWindowInsetBottom); insets }
         setContentView(frame)
         val header = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(22), dp(23), dp(22), dp(18)); setBackgroundColor(Color.rgb(16, 43, 38)); frame.addView(this) }
-        text(header, "CÔNG CỤ NGOẠI TUYẾN • 0.3.0", 11f, Color.rgb(154, 206, 181))
+        text(header, "CÔNG CỤ NGOẠI TUYẾN • 0.3.1", 11f, Color.rgb(154, 206, 181))
         text(header, "APK Tách Gốc", 29f, Color.WHITE).setTypeface(null, Typeface.BOLD)
         text(header, "Ký lại. Tạo bản sao độc lập. Không cần root.", 14f, Color.rgb(206, 224, 214))
         button(header, "Lịch sử và báo cáo") { showHistory() }
@@ -115,6 +116,14 @@ class MainActivity : Activity() {
             status = text(c, "Chọn APK để bắt đầu", 14f, muted).apply { accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE }
             progress = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply { max = 100; c.addView(this, LinearLayout.LayoutParams(-1, dp(10))) }
             error = text(c, "", 14f, Color.rgb(164, 44, 39)).apply { visibility = View.GONE; setTextIsSelectable(true) }
+            copyFailureButton = button(c, "Sao chép báo cáo lỗi lần này") {
+                val data = AppState.snapshot.activeHistoryId?.let { HistoryStore.read(this, it) }
+                if (data == null) message("Chưa đọc được báo cáo", "Mở Lịch sử và báo cáo để chọn phiên tạo APK bị lỗi.")
+                else {
+                    getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText("Báo cáo APK", HistoryStore.text(data)))
+                    Toast.makeText(this, "Đã sao chép báo cáo của lần xử lý này", Toast.LENGTH_SHORT).show()
+                }
+            }.apply { visibility = View.GONE }
             result = text(c, "", 12f, muted).apply { visibility = View.GONE; setTextIsSelectable(true) }
             outputButtons += button(c, "Lưu APK vào điện thoại") { currentReport?.let { createDocument(101, it.file.name, "application/vnd.android.package-archive") } }
             outputButtons += button(c, "Chia sẻ APK") { shareOutput() }
@@ -163,10 +172,15 @@ class MainActivity : Activity() {
         } else metadata.text = if (state.source != null) "${state.inputName}\nChưa đọc được thông tin ứng dụng. Vẫn có thể dùng Kiểm tra toàn bộ APK để gom các lỗi." else "Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại."
         if (!uiBusy) status.text = (if (state.busy) "${state.percent}% • " else "") + state.status + state.historyWarning?.let { "\n$it" }.orEmpty()
         progress.progress = state.percent
-        error.text = state.error ?: ""; error.visibility = if (state.error != null) View.VISIBLE else View.GONE
-        if (state.report != null) currentReport = state.report
+        error.text = state.error?.let { it + if (state.auditDetails.isNotBlank()) "\n\n${state.auditDetails}" else "" } ?: ""
+        error.visibility = if (state.error != null) View.VISIBLE else View.GONE
+        copyFailureButton.visibility = if (!busy && state.error != null && state.activeHistoryId != null) View.VISIBLE else View.GONE
+        currentReport = state.report
         outputButtons.forEach { it.isEnabled = !busy && currentReport?.file?.exists() == true }
-        if (currentReport == null) outputButtons.last().text = "Cài APK kết quả"
+        if (currentReport == null) {
+            outputButtons.last().text = "Cài APK kết quả"
+            result.text = ""; result.visibility = View.GONE
+        }
         currentReport?.let { report ->
             result.visibility = View.VISIBLE
             val kind = if (report.mode == Mode.CLONE) "BẢN TÁCH GỐC • PACKAGE MỚI" else "CHỈ KÝ LẠI • KHÔNG CÀI SONG SONG"
@@ -187,6 +201,8 @@ class MainActivity : Activity() {
     }, 100)
     private fun runService(intent: Intent) {
         focusScreen()
+        AppState.update { it.copy(report = null, activeHistoryId = null, auditDetails = "") }
+        render(AppState.snapshot)
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 200)
         try { startForegroundService(intent) } catch (e: Exception) { message("Không khởi chạy được xử lý", e.message ?: "Lỗi Android") }
     }
@@ -312,16 +328,16 @@ class MainActivity : Activity() {
         catch (e: Exception) { message("Không mở được trình cài đặt", e.message ?: "Hãy lưu APK rồi mở bằng trình quản lý tệp.") }
     }
     private fun restoreLastResult() {
-        if (AppState.snapshot.report != null) return
-        val prefs = getSharedPreferences("last", MODE_PRIVATE)
-        val file = prefs.getString("path", null)?.let { File(it) } ?: return
-        if (file.exists() && file.parentFile?.canonicalPath == File(filesDir, "results").canonicalPath) currentReport = BuildReport(file, prefs.getString("package", "") ?: "", prefs.getString("hash", "") ?: "", prefs.getString("changes", "").orEmpty().lines().filter { it.isNotBlank() }, prefs.getString("cert", "") ?: "", if (prefs.getString("mode", "RESIGN") == "CLONE") Mode.CLONE else Mode.RESIGN)
+        val state = AppState.snapshot
+        if (state.report != null || state.busy || state.source != null || state.error != null || state.percent != 0) return
+        val restored = ResultStore.restore(this) ?: return
+        AppState.update { it.copy(report = restored, status = "Kết quả tạo thành công gần nhất") }
     }
     private fun message(title: String, body: String) { if (!isFinishing && !isDestroyed) AlertDialog.Builder(this).setTitle(title).setMessage(body).setPositiveButton("Đóng", null).show() }
     private fun focusScreen() {
         screenRoot.requestFocus()
         (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).hideSoftInputFromWindow(screenRoot.windowToken, 0)
     }
-    private fun showLimits() = message("Hỗ trợ của bản 0.3.0", "• Kiểm tra toàn bộ gom các lỗi độc lập trước khi tạo APK. Lịch sử giữ 50 phiên, có Sao chép và Lưu TXT. Quét tĩnh không xác nhận mọi lỗi lúc chạy.\n• Hỗ trợ accountType qua @string/bí danh/cấu hình; từ chối tài nguyên thiếu, vòng lặp hoặc kiểu chưa hỗ trợ.\n• Tách gốc đổi package để cài song song; ký lại giữ package nên không tạo ứng dụng khác.\n• APK đơn, DEX thông thường và ELF native không cần sửa định danh bên trong. Giữ nguyên namespace lớp JNI và byte .so; đối chiếu SHA-256 sau đóng gói.\n• Chặn định danh native chưa xử lý, ELF không hợp lệ, split, sharedUserId, mã nhúng và tài nguyên chưa hỗ trợ. Không tự chuyển sang ký lại nếu tách thất bại.\n• Kiểm tra tĩnh không phát hiện được mọi định danh mã hóa hoặc tạo lúc chạy. Chưa kiểm thử Liên Quân hay các game khác.\n• Dữ liệu và đăng nhập bản gốc không được sao chép. Google, DRM, app links và kiểm tra chữ ký có thể hỏng. Không vượt chống gian lận.\n• Xác minh cấu trúc/chữ ký không đảm bảo ứng dụng chạy. Hãy cài thử.\n• Chỉ xử lý APK bạn có quyền sử dụng và sửa đổi.")
+    private fun showLimits() = message("Hỗ trợ của bản 0.3.1", "• Kiểm tra toàn bộ gom các lỗi độc lập trước khi tạo APK. Lịch sử giữ 50 phiên, có Sao chép và Lưu TXT. Quét tĩnh không xác nhận mọi lỗi lúc chạy.\n• Hỗ trợ accountType qua @string/bí danh/cấu hình; từ chối tài nguyên thiếu, vòng lặp hoặc kiểu chưa hỗ trợ.\n• Tách gốc đổi package để cài song song; ký lại giữ package nên không tạo ứng dụng khác.\n• APK đơn, DEX thông thường và ELF native không cần sửa định danh bên trong. Giữ nguyên namespace lớp JNI và byte .so; đối chiếu SHA-256 sau đóng gói.\n• Chặn định danh native chưa xử lý, ELF không hợp lệ, split, sharedUserId, mã nhúng và tài nguyên chưa hỗ trợ. Không tự chuyển sang ký lại nếu tách thất bại.\n• Kiểm tra tĩnh không phát hiện được mọi định danh mã hóa hoặc tạo lúc chạy. Chưa kiểm thử Liên Quân hay các game khác.\n• Dữ liệu và đăng nhập bản gốc không được sao chép. Google, DRM, app links và kiểm tra chữ ký có thể hỏng. Không vượt chống gian lận.\n• Xác minh cấu trúc/chữ ký không đảm bảo ứng dụng chạy. Hãy cài thử.\n• Chỉ xử lý APK bạn có quyền sử dụng và sửa đổi.")
     override fun onDestroy() { if (isFinishing) { pendingKey?.fill(0); pendingKey = null }; worker.shutdown(); super.onDestroy() }
 }

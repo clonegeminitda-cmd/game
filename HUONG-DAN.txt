@@ -1,6 +1,6 @@
-APK TÁCH GỐC 0.3.0 — LỊCH SỬ VÀ KIỂM TRA TOÀN BỘ
+APK TÁCH GỐC 0.3.1 — LỊCH SỬ VÀ KIỂM TRA TOÀN BỘ
 
-1. Cài cập nhật APK-Tach-Goc-0.3.0-test.apk lên công cụ cũ để giữ khóa ký.
+1. Cài cập nhật APK-Tach-Goc-0.3.1-test.apk lên công cụ cũ để giữ khóa ký.
 2. Chọn APK đơn từ điện thoại. Muốn cài song song, chọn Tạo bản tách gốc và nhập tên/package mới.
 3. Bấm KIỂM TRA TOÀN BỘ APK. Công cụ gom các lỗi độc lập, không dừng chỉ vì một XML hay thư viện lỗi.
    Khi đọc APK ban đầu thất bại nhưng đã chép được tệp đầy đủ, vẫn có thể bấm nút kiểm tra này.
@@ -21,3 +21,6 @@ báo cáo ghi rõ phần chưa kiểm tra. Còn lỗi thì không cố tạo APK
 Ký lại giữ package cũ nên Android vẫn nhận là app đã cài. Để cài song song phải dùng Tạo bản tách gốc.
 Native cần sửa định danh bên trong .so vẫn có thể bị từ chối. Chưa xác nhận Liên Quân/game/Google/DRM hoạt động.
 Gỡ công cụ xóa khóa/lịch sử/APK chưa xuất, còn bản sao đã cài vẫn tồn tại. Android 8.0 trở lên, APK debug cài thử.
+
+Bản 0.3.1: khi tạo mới thất bại, không còn hiện APK ký lại cũ và không cho lưu/cài nhầm kết quả cũ.
+Lỗi hiện ngay trên màn hình; bấm SAO CHÉP BÁO CÁO LỖI LẦN NÀY rồi dán vào chat. Không gỡ công cụ khi cập nhật để giữ khóa.

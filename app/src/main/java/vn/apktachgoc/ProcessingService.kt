@@ -14,7 +14,8 @@ import java.util.concurrent.Executors
 
 data class AppSnapshot(val busy: Boolean = false, val percent: Int = 0, val status: String = "Chọn APK để bắt đầu", val error: String? = null,
     val source: File? = null, val name: String = "", val info: ApkInfo? = null, val report: BuildReport? = null,
-    val inputName: String = "", val inputSha256: String = "", val diagnostics: String = "", val historyWarning: String? = null)
+    val inputName: String = "", val inputSha256: String = "", val diagnostics: String = "", val historyWarning: String? = null,
+    val activeHistoryId: String? = null, val auditDetails: String = "")
 object AppState {
     @Volatile var snapshot = AppSnapshot(); private set
     val listeners = CopyOnWriteArrayList<(AppSnapshot) -> Unit>()
@@ -59,7 +60,8 @@ class ProcessingService : Service() {
         if (intent == null) { stopSelf(startId); return START_NOT_STICKY }
         if (AppState.snapshot.busy) return START_NOT_STICKY
         timedOut = false; historyId = null
-        AppState.update { it.copy(busy = true, percent = 0, error = null, report = null, historyWarning = null) }
+        ResultStore.clear(this)
+        AppState.update { it.copy(busy = true, percent = 0, error = null, report = null, historyWarning = null, activeHistoryId = null, auditDetails = "") }
         if (Build.VERSION.SDK_INT >= 29) startForeground(7, notification(0, "Đang chuẩn bị"), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         else startForeground(7, notification(0, "Đang chuẩn bị"))
         wakeLock = getSystemService(PowerManager::class.java).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "apktachgoc:processing").apply { acquire(30 * 60 * 1000L) }
@@ -67,7 +69,11 @@ class ProcessingService : Service() {
             try {
                 val operation = if (intent.action == "BUILD") intent.getStringExtra("mode") ?: "RESIGN" else intent.action ?: "UNKNOWN"
                 val inputName = if (intent.action == "INSPECT") displayName(Uri.parse(intent.getStringExtra("uri"))) else AppState.snapshot.inputName
-                try { historyId = HistoryStore.begin(this, operation, inputName, intent.getStringExtra("package").orEmpty()) }
+                try {
+                    val id = HistoryStore.begin(this, operation, inputName, intent.getStringExtra("package").orEmpty())
+                    historyId = id
+                    AppState.update { it.copy(activeHistoryId = id) }
+                }
                 catch (e: Exception) { AppState.update { it.copy(historyWarning = "Không tạo được lịch sử: ${e.message}") } }
                 when (intent.action) {
                     "INSPECT" -> inspect(Uri.parse(intent.getStringExtra("uri")))
@@ -103,7 +109,7 @@ class ProcessingService : Service() {
     }
     private fun inspect(uri: Uri) {
         val inputName = displayName(uri)
-        AppState.update { AppSnapshot(busy = true, status = "Sao chép APK vào vùng làm việc", inputName = inputName, historyWarning = it.historyWarning) }
+        AppState.update { AppSnapshot(busy = true, status = "Sao chép APK vào vùng làm việc", inputName = inputName, historyWarning = it.historyWarning, activeHistoryId = it.activeHistoryId) }
         val dir = File(filesDir, "input").apply { mkdirs() }
         dir.listFiles()?.forEach { it.delete() }
         val file = File(dir, "selected.apk")
@@ -140,6 +146,10 @@ class ProcessingService : Service() {
         record(mapOf("target" to target))
         val report = ApkAudit.scan(input, mode, target, intent.getStringExtra("label").orEmpty()) { percent, phase -> progress(if (beforeBuild) percent * 45 / 100 else percent, phase) }
         record(mapOf("audit" to report.text(), "auditErrors" to report.errors, "auditWarnings" to report.warnings))
+        val blockers = report.issues.filter { !it.warning }.take(8)
+        val details = blockers.mapIndexed { index, issue -> "${index + 1}. [${issue.location}] ${issue.message}" }.joinToString("\n") +
+            if (report.errors > blockers.size) "\nCòn ${report.errors - blockers.size} lỗi; sao chép báo cáo để xem toàn bộ chi tiết được lưu." else ""
+        AppState.update { it.copy(auditDetails = details) }
         if (!beforeBuild) {
             record(mapOf("status" to "CHECKED"))
             AppState.update { it.copy(status = "Đã kiểm tra: ${report.errors} lỗi chặn, ${report.warnings} cảnh báo. Mở Lịch sử để sao chép toàn bộ.", error = if (report.errors > 0) "Chưa đủ điều kiện tạo APK. Xem tất cả phát hiện trong Lịch sử và báo cáo." else null, percent = 100) }
@@ -163,8 +173,8 @@ class ProcessingService : Service() {
         val report = ApkEngine.build(input, output, mode, target, intent.getStringExtra("label") ?: "", identity) { percent, phase -> progress(46 + percent * 54 / 100, phase) }
         record(mapOf("outputSha256" to report.sha256, "target" to target, "changes" to report.changes.joinToString("\n")))
         records.edit().putString(target, identity.fingerprint).apply()
-        getSharedPreferences("last", MODE_PRIVATE).edit().putString("path", output.path).putString("package", target).putString("hash", report.sha256).putString("cert", identity.fingerprint).putString("mode", mode.name).putString("changes", report.changes.joinToString("\n")).apply()
-        File(output.path + ".txt").writeText("APK Tách Gốc 0.3.0\nChế độ: ${mode.name}\nPackage: $target\nSHA-256: ${report.sha256}\nChứng chỉ: ${identity.fingerprint}\n\n${report.changes.joinToString("\n")}\n\nĐã kiểm tra chữ ký v2, manifest và CRC. Chưa xác nhận ứng dụng này chạy được; hãy cài thử.\n")
+        if (!ResultStore.save(this, report)) AppState.update { it.copy(historyWarning = "Không lưu được con trỏ kết quả gần nhất. Hãy xuất APK trước khi đóng công cụ.") }
+        File(output.path + ".txt").writeText("APK Tách Gốc 0.3.1\nChế độ: ${mode.name}\nPackage: $target\nSHA-256: ${report.sha256}\nChứng chỉ: ${identity.fingerprint}\n\n${report.changes.joinToString("\n")}\n\nĐã kiểm tra chữ ký v2, manifest và CRC. Chưa xác nhận ứng dụng này chạy được; hãy cài thử.\n")
         AppState.update { it.copy(report = report, error = null, status = "Đã tạo APK và xác minh chữ ký", percent = 100) }
     }
     override fun onDestroy() { worker.shutdown(); super.onDestroy() }

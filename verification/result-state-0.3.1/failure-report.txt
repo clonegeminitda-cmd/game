@@ -1,0 +1,85 @@
+BÁO CÁO APK TÁCH GỐC 0.3.1
+Mã phiên: e65651ad-71ad-4bda-af07-e0e430a9b401
+Thời gian: 2026-10-30T07:21:37Z
+Thao tác: Tách gốc
+Trạng thái: Thất bại
+Giai đoạn cuối: Đã kiểm tra: 2 lỗi chặn, 1 cảnh báo (45%)
+
+APK nguồn: sample.apk
+Tên ứng dụng: Mẫu Tách Gốc
+Package: vn.apktachgoc.sample
+Phiên bản: 1.0 (1)
+Kích thước: 818419 byte
+SHA-256 nguồn: 80c37d1b74cab8844760655db1b7c64df906d6d2a07d7820df23d5839485d1b6
+Package đích: bad
+
+Máy: unknown Android SDK built for x86_64
+Android: 8.0.0 / API 26
+ABI máy: x86_64, x86
+Giới hạn heap báo bởi Android: 512 MB
+
+LỖI / PHẦN CẦN XỬ LÝ
+Đã quét toàn bộ: 2 lỗi chặn. Chưa xuất APK; mở Lịch sử và báo cáo để sao chép mọi phát hiện trong một lần.
+java.lang.IllegalArgumentException: Đã quét toàn bộ: 2 lỗi chặn. Chưa xuất APK; mở Lịch sử và báo cáo để sao chép mọi phát hiện trong một lần.
+  vn.apktachgoc.ProcessingService.build(ProcessingService.kt:166)
+  vn.apktachgoc.ProcessingService.onStartCommand$lambda$15(ProcessingService.kt:80)
+  vn.apktachgoc.ProcessingService.$r8$lambda$4B75T1491E24oXz4HvlOkdmIEHc(Unknown Source:0)
+  vn.apktachgoc.ProcessingService$$ExternalSyntheticLambda15.run(D8$$SyntheticClass:0)
+  java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1162)
+  java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:636)
+  java.lang.Thread.run(Thread.java:764)
+
+
+KHẢO SÁT CẤU TRÚC APK
+Mục ZIP: 15; dung lượng giải nén: 2374524 byte
+DEX tiêu chuẩn: 3; classes.dex (2327064 byte), classes2.dex (1512 byte), classes3.dex (10796 byte)
+Thư viện native: 0; ABI: 
+Manifest: package=vn.apktachgoc.sample; version=1.0 (1); minSdk=26; split=false
+Package tài nguyên: 1
+activity: 1
+service: 0
+receiver: 1
+provider: 1
+uses-split: 0
+overlay: 0
+instrumentation: 0
+Provider authority: STRING / vn.apktachgoc.sample.notes;fixed.sample.authority
+res/xml/authenticator.xml <account-authenticator> android:accountType: REFERENCE / 0x7f010000
+  Giá trị định danh: fixed.account.sample, fixed.account.sample.vi
+res/xml/sync_adapter.xml <sync-adapter> android:accountType: REFERENCE / 0x7f010001
+  Giá trị định danh: fixed.account.sample, fixed.account.sample.vi
+Đã khảo sát 2/2 XML; authenticator/sync tìm thấy: 2.
+Đây là chẩn đoán cấu trúc, không xác nhận app/game chạy được. Native có định danh mã hóa/tạo động, DRM hoặc kiểm tra chữ ký có thể cần xử lý riêng.
+
+
+KIỂM TRA TOÀN BỘ APK
+Lỗi chặn: 2; cảnh báo: 1.
+Các kiểm tra độc lập tiếp tục sau lỗi; không tạo hay ký APK trong bước này.
+
+ZIP: 15 mục; APK 818419 byte.
+Đã đọc/đối chiếu CRC: 15/15 mục.
+Package nguồn: vn.apktachgoc.sample; version=1.0 (1); minSdk=26.
+XML nhị phân đã đọc: 2/2; accountType gồm chuỗi, @string, bí danh và các cấu hình.
+Đã khảo sát 3 DEX; 1048 lớp (namespace giữ nguyên).
+Asset/raw đã khảo sát: 0.
+Thư viện .so đã khảo sát: 0 (ELF/ABI và định danh dạng rõ).
+
+DANH SÁCH PHÁT HIỆN
+1. LỖI [Package đích] Nhập package hợp lệ khác bản gốc.
+2. LỖI [Tên bản sao] Tên mới cần từ 1 đến 80 ký tự.
+3. CẢNH BÁO [Giới hạn chạy thử] Quét cấu trúc không xác nhận game/đăng nhập/DRM chạy sau khi đổi package hoặc ký.
+
+Không thể kết luận mọi lỗi chỉ bằng quét tĩnh. Giới hạn an toàn có thể ngăn đọc một mục hỏng/quá lớn; lỗi đóng gói/ký/chạy chỉ biết khi tới bước tương ứng. Native mã hóa/tạo định danh động, dịch vụ đăng nhập, DRM và chống gian lận chưa được xác nhận.
+
+
+CÁC BƯỚC XỬ LÝ (tối đa 100 mốc gần nhất)
++0s 0% Kiểm tra toàn bộ: ZIP và CRC từng mục
++1s 0% Kiểm tra CRC 1/15
++1s 10% Kiểm tra manifest và từng định danh
++5s 12% Kiểm tra XML 1/2: res/xml/authenticator.xml
++5s 19% Kiểm tra DEX 1/3: classes.dex
++7s 21% Kiểm tra DEX 2/3: classes2.dex
++7s 23% Kiểm tra DEX 3/3: classes3.dex
++8s 45% Đã kiểm tra: 2 lỗi chặn, 1 cảnh báo
+
+Báo cáo chỉ lưu cấu trúc APK và kết quả xử lý, không ghi khóa ký riêng, mật khẩu hoặc phiên đăng nhập. Lịch sử lưu tối đa 50 phiên trên máy; không tự gửi. APK đầu vào được giữ nguyên.

@@ -1,23 +1,33 @@
-# APK Tách Gốc 0.2.0
+# APK Tách Gốc 0.3.0
 
 Ứng dụng Android viết bằng Kotlin, giao diện tiếng Việt, chạy hoàn toàn trên điện thoại và không cần root. Đây là bản APK cài thử (debug). Không có quyền Internet và không gửi APK hoặc khóa ký lên máy chủ.
 
+## Kiểm tra toàn bộ và lịch sử sao chép
+
+Bản 0.3.0 có nút **Kiểm tra toàn bộ APK**. Chọn APK, chọn chế độ/nhập package đích rồi bấm kiểm tra. Trình quét tiếp tục qua các lỗi độc lập trong ZIP/CRC, manifest, XML, DEX, asset/raw và từng `.so`. Manifest/tài nguyên hỏng vẫn có nhánh kiểm tra độc lập DEX/native khi ZIP đủ an toàn. Báo cáo ghi số mục đã khảo sát, lỗi theo tệp/thuộc tính và các phần chưa thể kết luận. Bước kiểm tra không tạo APK. **Tạo và ký APK** cũng quét trước, chỉ tiếp tục nếu không còn lỗi chặn.
+
+Mở nút **Lịch sử và báo cáo** ở đầu màn hình, chọn phiên **Kiểm tra toàn bộ**, rồi bấm **Sao chép** để lấy cùng lúc mọi phát hiện trong báo cáo, hoặc **Lưu TXT** qua trình chọn tệp Android. Lịch sử gồm cả lần đọc/tạo lỗi và thành công, giữ tối đa 50 phiên trong bộ nhớ riêng của công cụ, không tự gửi. Báo cáo ghi tên file, package/phiên bản, SHA-256, cấu trúc APK/ABI/native, máy/Android, giai đoạn và lỗi kỹ thuật; không ghi khóa ký riêng, mật khẩu hay dữ liệu đăng nhập. Tối đa 100 mốc tiến trình gần nhất và 500 phát hiện/ khoảng 95.000 ký tự chi tiết cho mỗi lượt quét; nếu vượt giới hạn thì ghi rõ phần lược bớt. Gỡ công cụ xóa lịch sử chưa xuất.
+
+Đã hỗ trợ `android:accountType="@string/..."` trong authenticator/sync-adapter, gồm bí danh và các cấu hình tài nguyên. Giữ ID tham chiếu, ánh xạ giá trị chuỗi đích theo cấu trúc. Phát hiện tài nguyên thiếu, vòng lặp, độ sâu quá mức hoặc kiểu chưa hỗ trợ; báo đường dẫn XML và chuỗi ID thay vì đổi chuỗi mù.
+
+Quét tĩnh không phát hiện được mọi lỗi đóng gói hoặc hành vi khi chạy. Nếu ZIP vượt giới hạn/không an toàn, công cụ ghi phần chưa đọc thay vì khẳng định đã kiểm tra hết. Trường hợp Android dừng tiến trình giữ bản ghi chưa hoàn tất và giai đoạn cuối.
+
 ## Tạo ứng dụng khác để cài song song
 
-Bản 0.2.0 mặc định chọn **Tạo bản tách gốc — cài song song**, kể cả APK có `.so`. Nhập tên mới và package mới. Android dùng package để xác định ứng dụng; đổi chữ ký mà giữ package sẽ vẫn mở màn hình cập nhật bản gốc.
+Bản này mặc định chọn **Tạo bản tách gốc — cài song song**, kể cả APK có `.so`. Nhập tên mới và package mới. Android dùng package để xác định ứng dụng; đổi chữ ký mà giữ package sẽ vẫn mở màn hình cập nhật bản gốc.
 
 Tách gốc native hỗ trợ thư viện không cần sửa định danh bên trong: giữ nguyên namespace lớp/JNI và mọi byte `.so`, đổi định danh Android trong manifest/tài nguyên/DEX. Kiểm tra ELF/ABI và quét các định danh đã biết dạng UTF-8, UTF-16LE/BE, gồm dạng package dùng dấu `/`. Chỉ miễn trừ tên lớp thật có trong DEX, vì đổi namespace lớp sẽ phá JNI. Nếu phát hiện định danh native còn cần sửa, công cụ từ chối và nêu tên thư viện; không tự chuyển sang ký lại. Kiểm tra tĩnh không chứng minh ứng dụng chạy được, không phát hiện được mọi chuỗi mã hóa hoặc định danh tạo lúc chạy. **Chưa kiểm thử Liên Quân**, vì chưa có APK gốc của người dùng.
 
-Cài đè APK công cụ 0.2.0 để cập nhật từ 0.1.x; không gỡ công cụ cũ để giữ khóa ký.
+Cài đè APK công cụ 0.3.0 để cập nhật từ bản cũ; không gỡ công cụ cũ để giữ khóa ký.
 
 ## Tải và cài
 
-Mở thư mục `downloads` trên GitHub, chọn `APK-Tach-Goc-0.2.0-test.apk` rồi bấm **Download raw file**.
+Mở thư mục `downloads` trên GitHub, chọn `APK-Tach-Goc-0.3.0-test.apk` rồi bấm **Download raw file**.
 
 1. Cài APK, cho phép trình duyệt/trình quản lý tệp cài ứng dụng từ nguồn này nếu Android hỏi.
 2. Mở **APK Tách Gốc → Chọn file APK**. Ứng dụng đọc tên, phiên bản và package từ bản sao nội bộ; không ghi vào tệp gốc.
 3. Muốn cài cạnh bản gốc, chọn **Tạo bản tách gốc — cài song song** và nhập tên/package riêng. Ví dụ `vn.ghi_chu.banrieng`. Package phải khác bản gốc, viết thường. **Chỉ ký lại** không tạo ứng dụng khác.
-4. Bấm **Tạo và ký APK**, đợi xác minh. Sau đó dùng **Lưu APK**, **Chia sẻ APK** hoặc **Cài bản sao (package mới)**. Android có thể yêu cầu quyền cho công cụ cài APK. Kết quả và nút cài ghi rõ loại đầu ra, kể cả sau mở lại công cụ.
+4. Bấm **Kiểm tra toàn bộ APK**, đợi kết quả rồi mở **Lịch sử và báo cáo → chọn phiên → Sao chép** nếu cần gửi chẩn đoán. Khi không còn lỗi chặn, bấm **Tạo và ký APK**, đợi xác minh. Sau đó dùng **Lưu APK**, **Chia sẻ APK** hoặc **Cài bản sao (package mới)**. Android có thể yêu cầu quyền cho công cụ cài APK. Kết quả và nút cài ghi rõ loại đầu ra, kể cả sau mở lại công cụ.
 5. Cài và kiểm tra ứng dụng. Phiên đăng nhập trong bản sao bắt đầu mới. Không sao chép dữ liệu hoặc token đăng nhập của bản gốc.
 
 **Ký lại APK** giữ nguyên package nên không cài cạnh bản gốc và thường không cập nhật được bản gốc có chữ ký khác. **Tách gốc** tạo package riêng, có UID/vùng dữ liệu riêng, được Android cài độc lập. Bản sao đã cài không phụ thuộc vòng đời của bản gốc hoặc công cụ.
@@ -36,7 +46,7 @@ Gỡ công cụ xóa khóa lưu nội bộ và các APK chưa xuất. Ứng dụ
 - Đọc/sửa manifest và tài nguyên nhị phân bằng ARSCLib. Giữ namespace lớp DEX và chuyển tên lớp tương đối sang tên đầy đủ trước khi đổi package.
 - Tạo bảng ánh xạ cho package, provider authorities (kể cả authority không bắt đầu bằng package), quyền do app khai báo, account type trong XML authenticator/sync adapter, task affinity, process toàn cục, action/category/scheme thuộc package cũ. Sửa các giá trị định danh khớp toàn bộ và authority có ranh giới trong URI `content://`; sửa hằng chuỗi trong DEX, static values/annotations và tài nguyên. DEX thư viện không chứa giá trị cần đổi được giữ nguyên từng byte. Không thay thế chuỗi con hàng loạt trong mã hoặc dữ liệu.
 - Xóa chữ ký cũ, đóng gói/căn chỉnh ZIP, ký v1/v2/v3 bằng apksig, rồi xác minh chữ ký v2, chứng chỉ, manifest, phiên bản, CRC và SHA-256 đầu vào. Kết quả chỉ được đổi tên thành APK cuối sau khi qua kiểm tra. Tệp lỗi không được công bố là thành công.
-- Từ chối split/config APK, base có dấu hiệu cần split, APKS/XAPK/AAB, sharedUserId, overlay/instrumentation/thư viện chia sẻ, nhiều package tài nguyên, tên lớp/định danh manifest qua tham chiếu tài nguyên chưa hỗ trợ.
+- Từ chối split/config APK, base có dấu hiệu cần split, APKS/XAPK/AAB, sharedUserId, overlay/instrumentation/thư viện chia sẻ, nhiều package tài nguyên, tên lớp/định danh manifest qua tham chiếu tài nguyên chưa hỗ trợ (accountType trong XML đã có bộ giải @string riêng).
 - Tách gốc `.so` thông thường khi kiểm tra ELF và tham chiếu định danh qua. Từ chối native cần sửa định danh, mã nhúng hoặc asset/raw có định danh gốc cần bộ xử lý riêng. Cả hai chế độ đều giữ byte native, đối chiếu SHA-256 và căn chỉnh thư viện không nén 16 KB; không sửa ELF hay đảm bảo tương thích mọi thiết bị 16 KB.
 - Không thể phát hiện mọi phụ thuộc split bị nhà đóng gói xóa dấu hiệu; không đảm bảo xử lý được định danh tự sinh/ghép động, mã được mã hóa, framework đóng gói, phản xạ và đường dẫn hardcode. Nếu trường hợp chưa hỗ trợ được phát hiện thì trả lỗi cụ thể. APK hợp lệ về cấu trúc vẫn có thể không chạy do logic ứng dụng.
 - Đăng nhập Google, app links, thông báo đẩy, DRM, dịch vụ ngoài app và kiểm tra chữ ký có thể không hoạt động sau ký lại. Không cam kết tương thích mọi game, không vượt chống gian lận.
@@ -74,7 +84,7 @@ Chạy `OnDeviceTest#cloneRealNativeApkOnAndroid` để tách gốc ngay trong A
 ## Cấu trúc
 
 - `app/`: giao diện tiếng Việt, foreground service, thông báo tiến trình, SAF, chia sẻ/cài APK, kho khóa Android Keystore.
-- `core/`: xử lý ZIP/manifest/tài nguyên/DEX, ký/xác minh và định dạng khóa; dùng lại cùng mã trên JVM và Android.
+- `core/`: quét nhiều lỗi, giải accountType qua tài nguyên, xử lý ZIP/manifest/tài nguyên/DEX, ký/xác minh và định dạng khóa; dùng lại cùng mã trên JVM và Android.
 - `native-sample/`: app mẫu có `.so` thật, phục vụ kiểm thử tách gốc, ký lại và dữ liệu riêng.
 - `sample/`: app mẫu có phiên đăng nhập mô phỏng, provider, quyền riêng và receiver phục vụ thử nghiệm. Receiver chỉ thuộc app mẫu, không có trong công cụ.
 - `scripts/`: kiểm thử cài đặt Android.

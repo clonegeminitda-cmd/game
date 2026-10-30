@@ -164,9 +164,12 @@ object ApkEngine {
             if (e.name == "data") string(e, "scheme")?.takeIf { it == old || it.startsWith("$old.") }?.let { record(it, "scheme") }
         }
         val resourceXml = if (module.hasTableBlock()) module.listResFiles().filter { it.isBinaryXml }.map { it to it.readAsXmlDocument() } else emptyList()
-        resourceXml.forEach { (_, xml) ->
+        resourceXml.forEach { (file, xml) ->
             xml.recursiveElements().asSequence().forEach { e ->
-                if (e.name in setOf("account-authenticator", "sync-adapter")) string(e, "accountType")?.let { record(it, "account") }
+                if (e.name in setOf("account-authenticator", "sync-adapter")) attr(e, "accountType")?.let { a ->
+                    ResourceIdentifiers.values(module, a, "${file.filePath} <${e.name}>").forEach { record(it, "account") }
+                    if (a.valueType == ValueType.REFERENCE) changes += "${file.filePath}: android:accountType ${ResourceIdentifiers.hex(a.data)} đã giải tham chiếu @string/bí danh theo mọi cấu hình."
+                }
             }
         }
         require(mapping.values.toSet().size == mapping.size) { "Định danh mới bị trùng sau ánh xạ; hãy dùng package khác." }

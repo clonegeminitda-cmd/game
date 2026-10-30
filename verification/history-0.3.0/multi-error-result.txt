@@ -1,0 +1,3 @@
+PASS: INSPECT thất bại vẫn giữ APK để quét; 9 lỗi độc lập trong một phiên; lịch sử đọc lại từ đĩa; nút Sao chép chứa đủ các lỗi.
+Input SHA256=95ce934d103dafc6171da0c9fa79ce6d19c3328d6ba30549bbc302830e3fc477
+History id=95af8c5d-16b2-4081-9e9c-582f1da60dcf

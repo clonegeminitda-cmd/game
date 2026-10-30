@@ -1,29 +1,26 @@
-# APK Tách Gốc 0.2.0 — tách gốc native có giới hạn
+# APK Tách Gốc 0.3.0 — kiểm tra nhiều lỗi, lịch sử và accountType qua tài nguyên
 
-Bản cài thử Android 8.0 trở lên, versionCode 3. Cùng chữ ký công cụ 0.1.x để cài cập nhật và giữ khóa nội bộ. Bản 0.1.1 chỉ ký lại native, không đáp ứng mục tiêu cài song song; 0.2.0 thay đổi phạm vi này.
+Bản APK debug, versionCode 4, Android 8.0 trở lên. Cùng chứng chỉ công cụ các bản trước (`97488eff9cd99543af0bb4c9d5806d2950d5fd57551aed31558cc4ed36cb0296`) để cài cập nhật. Toàn bộ xử lý chạy trên Android, không quyền Internet/root.
 
 ## Kết quả đã chạy
 
-- Build Kotlin/Android SDK 35 thành công. 12/12 kiểm thử JVM qua, 0 lỗi. Android Lint bản cuối: 0 lỗi, 28 cảnh báo. APK công cụ qua xác minh chữ ký v2 và zipalign.
-- Mẫu thật có ELF/JNI x86_64. C gọi `FindClass("vn/apktachgoc/nativesample/MainActivity")`, giữ namespace lớp gốc, sau đó trả về 73. Có SharedPreferences và receiver thử nghiệm chỉ trong mẫu.
-- Instrumentation `cloneRealNativeApkOnAndroid`: PASS, 28,224 giây trên emulator Android 8.0.0/API 26 x86_64, phần mềm, không KVM. Đọc, đổi package, đóng gói, ký và xác minh ngay trong Android, không dùng máy chủ.
-- Package mới `vn.apktachgoc.nativesample.tachgoc`, khác `vn.apktachgoc.nativesample`. APK đầu vào giữ nguyên SHA-256. Từng byte thư viện `.so` được giữ nguyên; SHA-256 thư viện trước/sau: `b099339b5ec55a38811103de469b2f00babc8fb1512b6cd073e2a66fb3d90adc`.
-- APK do instrumentation tạo: SHA-256 `93e2c81d283ff96681d52f04dc3886fb8a59c9df34e44273ce2ee4affbaf8793`. Qua xác minh chữ ký v2/v3 và zipalign -c -P 16 4.
-- Kho khóa trên emulator đã có từ 0.1.1 được giữ sau cập nhật: fingerprint chứng chỉ `2157660c631e77786091b977fc984f5eaf5f577b8c5a99cc4220cdd120c79004` vẫn trùng kết quả cũ.
-- Thử giao diện thật: chọn APK native qua SAF; lựa chọn tách gốc vẫn được bật và chọn, không tự chuyển sang ký lại. Nút Tạo và ký APK tạo package mới. Đầu ra giao diện SHA-256 `12b445de60a43e3bddc3d0c6856fe9b442ce0a25c06ff45be58b42ef3f9c3536`; tên hiển thị khác mẫu instrumentation nên SHA khác.
-- Trong khi bản gốc vẫn cài, nút Cài bản sao mở Android installer hỏi **Install**, không hỏi cập nhật. Bấm Install: App installed. Mở bản sao: JNI FindClass/nativeValue = 73.
-- `native-clone-smoke.sh` PASS: cài hai package cùng lúc, ghi ORIGINAL_NATIVE và CLONE_NATIVE vào hai vùng dữ liệu riêng, mở cả hai và xác nhận JNI 73. UID bản gốc 10072, bản sao 10073. Gỡ bản gốc, force-stop và mở lại bản sao: JNI 73 và CLONE_NATIVE vẫn còn. Gỡ cả công cụ, force-stop/mở lại bản sao: JNI 73 và CLONE_NATIVE vẫn còn.
-- APK công cụ cuối được cài cập nhật và mở thành công. Sau thử giao diện, chỉ sửa nhãn nút cài bị vô hiệu hóa khi chưa có kết quả để không lưu nhãn ký lại cũ; build/lint lại, cài và mở bản cuối trước khi kiểm tra gỡ công cụ.
-- Kiểm thử JVM gồm: tách gốc mẫu Java/Kotlin và native, ký lại giữ package/DEX/.so, chữ ký, khóa/mật khẩu, split, định danh asset, package lỗi, ELF bị cắt cụt và native chứa định danh chưa xử lý. Các chuỗi native UTF-8/UTF-16LE/UTF-16BE vắt qua ranh giới bộ đệm đều bị từ chối, không công bố file hoặc để lại .pending/.unsigned.
+- Kotlin/Android SDK 35 build thành công, Android Lint 0 lỗi / 27 cảnh báo. APK công cụ cuối qua apksigner v2 và zipalign. SHA-256: `3490316b5952bfe8704e8b5648f99ff4b8f5d9048dbb1b0b418c50ac18011900`.
+- **16/16 kiểm thử JVM qua**, gồm hồi quy tách gốc/ký lại Java/Kotlin/native, khóa và các gói bị từ chối. Bổ sung @string/bí danh/cấu hình accountType, tài nguyên thiếu/vòng lặp, quét nhiều lỗi và tiếp tục DEX/native khi manifest hỏng.
+- accountType được giải theo toàn bộ cấu hình và bí danh, giữ ID tham chiếu trong XML; ánh xạ chuỗi đích chính xác. Mẫu có account-authenticator và sync-adapter dùng @string, bí danh, cấu hình mặc định/tiếng Việt. Kiểm tra cả hai giá trị được chuyển sang định danh riêng. Tài nguyên thiếu/vòng lặp từ chối tạo file kết quả.
+- Mẫu hỏng có **9 lỗi chặn độc lập**: sharedUserId; base cần split; tên lớp qua tham chiếu tài nguyên chưa hỗ trợ; vòng lặp accountType; hai asset chứa định danh; hai thư viện ELF có định danh cần sửa; một ELF bị cắt cụt. Cùng một lượt quét đọc đủ 20/20 mục ZIP/CRC, 2/2 XML, 3 DEX, 2 asset và 3 thư viện native. Không dừng sau lỗi accountType hoặc thư viện đầu.
+- Manifest bị làm hỏng cũng được thử: báo lỗi manifest rồi tiếp tục khảo sát DEX/ELF độc lập; thư viện ELF hỏng vẫn có trong báo cáo. Định danh chưa đọc được được ghi là chưa thể đối chiếu, không suy đoán.
+- **2/2 instrumentation Android qua**, thời gian 77,861 giây, emulator Android 8.0.0/API 26 x86_64, phần mềm không KVM. Log cuối `history-device-test-pass.log`.
+- `collectsAllErrorsPersistsAndCopiesOneReport`: đọc APK lỗi vẫn giữ bản sao đầy đủ để quét; quét đủ 9 lỗi; đọc lại lịch sử từ đĩa; bấm nút Sao chép thật qua UI; đọc clipboard trên luồng chính và đối chiếu nguyên văn với báo cáo. Tất cả tên XML/asset/native và SHA-256 có trong một lần sao chép.
+- `buildsAccountResourceApkThroughServiceAndRecordsSuccess`: chạy service INSPECT và BUILD thật. Service quét trước, sửa accountType, đóng gói/ký/xác minh trên Android; lịch sử SUCCESS với 0 lỗi chặn. APK đầu ra SHA-256 `9a419693622cca8182df8860785fc389d0d21d810d78846a52ddbaf3da8a0b58`, package mới `vn.apktachgoc.sample.tachgoc`. Qua apksigner v2/v3 và căn chỉnh ZIP.
+- Thử giao diện trên APK công cụ cuối: force-stop rồi mở lạnh công cụ, mở Lịch sử; bản ghi 9 lỗi vẫn còn. Nút Lưu TXT mở SAF và xuất vào Downloads. Tệp TXT 5.321 byte **giống hệt từng byte** với báo cáo clipboard của kiểm thử, gồm đủ 9 lỗi.
+- Cài đồng thời app mẫu gốc và app mẫu tách gốc trên emulator, mở cả hai. Android Resources đọc accountType qua bí danh: bản gốc `fixed.account.sample`, bản sao `vn.apktachgoc.sample.tachgoc.account.…`; bản sao mở được, kiểm tra package/BuildConfig/provider/tài nguyên trong MainActivity qua. Không tạo tài khoản thật hoặc kiểm thử đăng nhập dịch vụ ngoài.
 
-## Giới hạn
+## Hành vi và phạm vi
 
-Chưa có APK Liên Quân của người dùng; ảnh chụp màn hình không cho phép kiểm tra 37 thư viện bên trong. Không xác nhận trò chơi đó tách được hoặc chạy được. Chưa thử điện thoại vật lý hay chạy thư viện ARM/ARM64. Mẫu x86_64 là fixture emulator, APK công cụ không chứa thư viện mẫu.
+Nút Kiểm tra toàn bộ khảo sát các phần độc lập theo chế độ đã chọn, thu thập lỗi theo tệp/thuộc tính và số mục đã quét. Tạo và ký cũng quét trước; còn lỗi chặn thì chưa xuất APK. Mỗi thư viện native được kiểm tra riêng, lỗi của thư viện này không bỏ qua các thư viện khác. Khi manifest/tài nguyên hỏng, có nhánh kiểm tra độc lập bằng ZIP.
 
-Native chỉ được tách khi không cần sửa định danh bên trong ELF. Công cụ kiểm tra cấu trúc ELF/ABI, quét định danh đã biết dạng rõ và giữ nguyên lớp JNI/byte thư viện; nếu phát hiện tham chiếu chưa xử lý thì báo thư viện và dừng, không tự chuyển sang ký lại. Kiểm tra tĩnh không phát hiện mọi định danh mã hóa/tạo động và không chứng minh ứng dụng chạy được. APK hợp lệ vẫn có thể không chạy do kiểm tra chữ ký, DRM, dịch vụ tài khoản hoặc logic của ứng dụng. Không vượt chống gian lận hay bảo đảm Google login.
+Lịch sử lưu AtomicFile trong vùng riêng không sao lưu, tối đa 50 phiên, gồm đọc/quét/tạo thành công hoặc lỗi. Có Sao chép và Lưu TXT thật. Ghi tên file, package/phiên bản/SHA-256, máy/Android/ABI/heap, chẩn đoán, giai đoạn và lỗi kỹ thuật; không ghi khóa riêng, mật khẩu hay dữ liệu đăng nhập, không tự gửi. Phiên chưa xong vẫn có bản ghi và mốc cuối. Giới hạn 100 mốc tiến trình gần nhất, 500 phát hiện/khoảng 95.000 ký tự chi tiết mỗi quét; phần lược bớt được nêu rõ.
 
-Còn từ chối split/sharedUserId/mã nhúng/tài nguyên hoặc asset cần bộ xử lý riêng. Ký lại vẫn giữ package, không cài song song. Không gỡ app thật của người dùng để thử.
+Chưa có APK Liên Quân cụ thể của người dùng; không xác nhận game này chạy hoặc biết hết mọi điều kiện của nó. Chưa thử điện thoại vật lý/ARM ở bản này. Kiểm tra tĩnh không thể biết mọi lỗi chỉ lộ ra khi đóng gói/ký/chạy. ZIP không an toàn/quá lớn có thể không đọc hết; báo cáo ghi rõ phần chưa khảo sát. Không cố vượt giới hạn hoặc xuất APK lỗi rồi báo thành công. Native có định danh mã hóa/tạo động, chữ ký/DRM/Google login/chống gian lận có thể vẫn cần xử lý riêng.
 
-Emulator không có tăng tốc phần cứng từng hiện System UI ANR lúc khởi động; đã chờ System UI và tiếp tục. Không dùng lỗi môi trường đó để suy diễn thành kết quả của app. Kết luận JNI/dữ liệu ở trên dựa trên APK đã cài, mở lạnh và kiểm tra sau từng lần gỡ. Ảnh/log/XML có trong `verification/native-0.2.0/`. Báo cáo 0.1.0 và 0.1.1 được lưu riêng để đối chiếu, không thay thế kiểm thử bản này.
-
-APK công cụ SHA-256: `52ceed102ffcff7ccf4a3bf1645bb517d81a3a3ef1ae3b5d958cd43dc151d086`.
+Báo cáo các bản trước được giữ trong TEST-REPORT-0.1.0.md, TEST-REPORT-0.1.1.md và TEST-REPORT-0.2.0.md. Các log/ảnh/XML/TXT của bản này trong `verification/history-0.3.0/`.

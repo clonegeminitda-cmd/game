@@ -1,21 +1,23 @@
-APK TÁCH GỐC 0.2.0 — BẢN CÀI THỬ
+APK TÁCH GỐC 0.3.0 — LỊCH SỬ VÀ KIỂM TRA TOÀN BỘ
 
-1. Cài cập nhật APK-Tach-Goc-0.2.0-test.apk lên công cụ cũ, không gỡ để giữ khóa ký.
-2. Chọn APK đơn đầy đủ từ điện thoại.
-3. Muốn máy nhận là APP KHÁC: chọn Tạo bản tách gốc — cài song song.
-   Nhập tên mới và package mới khác bản gốc. Ví dụ bản gốc com.garena.game.kgvn,
-   package bản sao có thể là com.garena.game.kgvn.tachgoc. Ví dụ này không xác nhận Liên Quân tương thích.
-4. Bấm Tạo và ký APK. Có .so thì công cụ kiểm tra ELF/định danh, giữ tên lớp JNI và byte thư viện.
-   Nếu gặp tham chiếu native chưa xử lý, công cụ dừng và nêu tệp, không tự đổi sang ký lại.
-5. Khi có kết quả PACKAGE MỚI, chọn Cài bản sao (package mới), hoặc lưu/chia sẻ APK.
-6. Cài thử và đăng nhập mới. Không sao chép dữ liệu/phiên đăng nhập bản gốc.
-7. Xuất khóa .p12 có mật khẩu trước khi gỡ công cụ. Giữ cùng khóa/package để cập nhật bản sao.
+1. Cài cập nhật APK-Tach-Goc-0.3.0-test.apk lên công cụ cũ để giữ khóa ký.
+2. Chọn APK đơn từ điện thoại. Muốn cài song song, chọn Tạo bản tách gốc và nhập tên/package mới.
+3. Bấm KIỂM TRA TOÀN BỘ APK. Công cụ gom các lỗi độc lập, không dừng chỉ vì một XML hay thư viện lỗi.
+   Khi đọc APK ban đầu thất bại nhưng đã chép được tệp đầy đủ, vẫn có thể bấm nút kiểm tra này.
+4. Mở LỊCH SỬ VÀ BÁO CÁO ở đầu màn hình → chọn phiên Kiểm tra toàn bộ → SAO CHÉP.
+   Dán toàn bộ nội dung vào chat để gửi các phát hiện trong một lần. Có thể dùng LƯU TXT để xuất tệp.
+5. Khi đủ điều kiện, bấm Tạo và ký APK. Nút này cũng tự chạy kiểm tra trước; có lỗi chặn thì chưa xuất APK.
+6. Sau xác minh, lưu/chia sẻ/cài bản sao. Không sao chép phiên đăng nhập của bản gốc.
+7. Xuất khóa .p12 có mật khẩu trước khi gỡ công cụ; giữ cùng khóa/package để cập nhật bản sao.
 
-CHỈ KÝ LẠI giữ nguyên package: Android vẫn nhận là app cũ và hiện Cập nhật.
-Đổi chữ ký không phải đổi định danh ứng dụng. Không dùng chế độ ký lại để cài song song.
+Đã hỗ trợ accountType qua @string/bí danh và các cấu hình. Thiếu tài nguyên/vòng lặp/kiểu lạ được ghi rõ.
+Lịch sử lưu tối đa 50 phiên trên máy, gồm cả lỗi và thành công; tồn tại sau đóng/mở lại công cụ.
+Báo cáo có tên APK/package/phiên bản, SHA-256, cấu trúc, native/ABI, máy/Android, tiến trình và lỗi.
+Không ghi khóa ký riêng, mật khẩu hay dữ liệu đăng nhập. Không tự gửi báo cáo.
+Giới hạn báo cáo: 500 phát hiện/khoảng 95.000 ký tự, 100 mốc tiến trình gần nhất; phần lược bớt được ghi rõ.
 
-Native được hỗ trợ khi không cần sửa định danh bên trong .so. Kiểm tra tĩnh có giới hạn,
-không đảm bảo game, đăng nhập Google, DRM hoặc chống gian lận chạy được. Chưa thử Liên Quân.
-Chưa nhận split APK, sharedUserId, mã nhúng hoặc các trường hợp cần bộ xử lý riêng.
-Bản sao đã cài độc lập với bản gốc và công cụ. Hãy lưu APK ra ngoài để giữ tệp khi gỡ công cụ.
-Xem TEST-REPORT.md để biết chính xác kết quả đã kiểm thử. Đây là APK debug, Android 8.0 trở lên.
+Quét tĩnh không biết mọi lỗi chỉ xuất hiện lúc đóng gói hoặc chạy. ZIP không an toàn/quá lớn có thể không đọc được hết;
+báo cáo ghi rõ phần chưa kiểm tra. Còn lỗi thì không cố tạo APK lỗi rồi báo thành công.
+Ký lại giữ package cũ nên Android vẫn nhận là app đã cài. Để cài song song phải dùng Tạo bản tách gốc.
+Native cần sửa định danh bên trong .so vẫn có thể bị từ chối. Chưa xác nhận Liên Quân/game/Google/DRM hoạt động.
+Gỡ công cụ xóa khóa/lịch sử/APK chưa xuất, còn bản sao đã cài vẫn tồn tại. Android 8.0 trở lên, APK debug cài thử.

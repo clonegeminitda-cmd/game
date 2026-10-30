@@ -19,7 +19,7 @@ class MainActivity : Activity() {
         fun refresh() {
             val providerValue = contentResolver.query(Uri.parse("content://vn.apktachgoc.sample.notes/session"), null, null, null, null)?.use { c -> if (c.moveToFirst()) c.getString(0) else "rỗng" }
             val compiledId = Class.forName("vn.apktachgoc.sample.BuildConfig").getField("APPLICATION_ID").get(null)
-            info.text = "${getString(resources.getIdentifier("app_name", "string", packageName))}\nPackage: $packageName\nBuildConfig: $compiledId\nUID: ${android.os.Process.myUid()}\nDữ liệu: ${prefs.getString("marker", "chưa đăng nhập")}\nProvider: $providerValue\nTài nguyên package: ${getString(R.string.own_package)}"
+            info.text = "${getString(resources.getIdentifier("app_name", "string", packageName))}\nPackage: $packageName\nBuildConfig: $compiledId\nUID: ${android.os.Process.myUid()}\nDữ liệu: ${prefs.getString("marker", "chưa đăng nhập")}\nProvider: $providerValue\nTài nguyên package: ${getString(R.string.own_package)}\naccountType qua bí danh: ${getString(R.string.account_alias)}"
         }
         Button(this).apply { text = "Lưu phiên đăng nhập"; layout.addView(this); setOnClickListener { prefs.edit().putString("marker", login.text.toString()).commit(); refresh() } }
         Button(this).apply { text = "Đọc lại dữ liệu"; layout.addView(this); setOnClickListener { refresh() } }

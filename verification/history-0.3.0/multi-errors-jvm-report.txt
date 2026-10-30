@@ -1,0 +1,25 @@
+KIỂM TRA TOÀN BỘ APK
+Lỗi chặn: 9; cảnh báo: 1.
+Các kiểm tra độc lập tiếp tục sau lỗi; không tạo hay ký APK trong bước này.
+
+ZIP: 20 mục; APK 817021 byte.
+Đã đọc/đối chiếu CRC: 20/20 mục.
+Package nguồn: vn.apktachgoc.sample; version=1.0 (1); minSdk=26.
+XML nhị phân đã đọc: 2/2; accountType gồm chuỗi, @string, bí danh và các cấu hình.
+Đã khảo sát 3 DEX; 1048 lớp (namespace giữ nguyên).
+Asset/raw đã khảo sát: 2.
+Thư viện .so đã khảo sát: 3 (ELF/ABI và định danh dạng rõ).
+
+DANH SÁCH PHÁT HIỆN
+1. LỖI [android:sharedUserId] Shared UID chưa hỗ trợ đổi định danh/ký mới.
+2. LỖI [<application>] Base APK yêu cầu split.
+3. LỖI [<application> android:name] Kiểu REFERENCE / 0x7f7fffff chưa hỗ trợ ở định danh này.
+4. LỖI [res/xml/authenticator.xml <account-authenticator> android:accountType] res/xml/authenticator.xml android:accountType: vòng lặp tham chiếu tài nguyên 0x7f010000 → 0x7f010000.
+5. LỖI [assets/config-one.json] Định danh trong asset/raw cần bộ xử lý theo định dạng: vn.apktachgoc.sample.
+6. LỖI [assets/config-two.json] Định danh trong asset/raw cần bộ xử lý theo định dạng: vn.apktachgoc.sample.
+7. LỖI [lib/x86_64/libfirst.so] phát hiện định danh vn.apktachgoc.sample trong native, ngoài tham chiếu lớp JNI đã biết. Cần xử lý riêng thư viện này; không xuất APK và không tự chuyển sang Ký lại.
+8. LỖI [lib/x86_64/libsecond.so] phát hiện định danh vn.apktachgoc.sample trong native, ngoài tham chiếu lớp JNI đã biết. Cần xử lý riêng thư viện này; không xuất APK và không tự chuyển sang Ký lại.
+9. LỖI [lib/arm64-v8a/libbroken.so] Thư viện lib/arm64-v8a/libbroken.so không phải ELF dùng chung hợp lệ hoặc ABI chưa hỗ trợ; không xuất APK.
+10. CẢNH BÁO [Giới hạn chạy thử] Quét cấu trúc không xác nhận game/đăng nhập/DRM chạy sau khi đổi package hoặc ký.
+
+Không thể kết luận mọi lỗi chỉ bằng quét tĩnh. Giới hạn an toàn có thể ngăn đọc một mục hỏng/quá lớn; lỗi đóng gói/ký/chạy chỉ biết khi tới bước tương ứng. Native mã hóa/tạo định danh động, dịch vụ đăng nhập, DRM và chống gian lận chưa được xác nhận.

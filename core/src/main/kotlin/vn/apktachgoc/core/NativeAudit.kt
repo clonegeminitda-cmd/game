@@ -13,7 +13,13 @@ import java.util.zip.ZipFile
 internal object NativeAudit {
     private const val CONTEXT = 2048
     private data class Needle(val id: String, val encoding: Int)
-    fun check(apk: File, identifiers: Set<String>, classes: Set<String>): Int = ZipFile(apk).use { zip ->
+    fun check(apk: File, identifiers: Set<String>, classes: Set<String>): Int {
+        val errors = mutableListOf<String>()
+        val count = inspect(apk, identifiers, classes, { location, message -> if (errors.size < 100) errors += "$location: $message" })
+        require(errors.isEmpty()) { errors.joinToString("\n") }
+        return count
+    }
+    fun inspect(apk: File, identifiers: Set<String>, classes: Set<String>, issue: (String, String) -> Unit, progress: (Int, Int, String) -> Unit = { _, _, _ -> }): Int = ZipFile(apk).use { zip ->
         val libraries = zip.entries().asSequence().filter { !it.isDirectory && it.name.endsWith(".so", true) }.toList()
         if (libraries.isEmpty()) return@use 0
         val needles = linkedMapOf<String, Needle>()
@@ -29,8 +35,10 @@ internal object NativeAudit {
                 }
             }
         }
-        val pattern = Regex(needles.keys.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) })
-        libraries.forEach { entry ->
+        val pattern = if (needles.isEmpty()) null else Regex(needles.keys.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) })
+        libraries.forEachIndexed { index, entry ->
+            progress(index + 1, libraries.size, entry.name)
+            try {
             require(Regex("lib/(armeabi|armeabi-v7a|arm64-v8a|x86|x86_64|riscv64)/[^/]+\\.so").matches(entry.name)) {
                 "Thư viện ${entry.name} nằm ngoài cấu trúc ABI được hỗ trợ; chưa tách gốc APK này."
             }
@@ -40,6 +48,7 @@ internal object NativeAudit {
                 while (used < header.size) { val n = input.read(header, used, header.size - used); if (n < 0) break; used += n }
                 validateElf(header, used, entry.size, entry.name)
             }
+            val unresolved = linkedSetOf<String>()
             zip.getInputStream(entry).buffered().use { input ->
                 val buffer = ByteArray(65536)
                 var tail = ""
@@ -49,17 +58,17 @@ internal object NativeAudit {
                     val chunk = tail + if (end) "" else String(buffer, 0, n, Charsets.ISO_8859_1)
                     // Defer matches near the end so an intact class name can be recognized.
                     val limit = if (end) chunk.length else maxOf(0, chunk.length - CONTEXT)
-                    pattern.findAll(chunk).filter { it.range.first < limit }.forEach { match ->
+                    pattern?.findAll(chunk)?.filter { it.range.first < limit }?.forEach { match ->
                         val needle = needles.getValue(match.value)
                         val context = tokenAt(chunk, match.range.first, needle.encoding)
-                        require(context.isNotEmpty() && context in classes) {
-                            "Chưa tách gốc được ${entry.name}: phát hiện định danh ${needle.id} trong native, ngoài tham chiếu lớp JNI đã biết. Cần xử lý riêng thư viện này; không xuất APK và không tự chuyển sang Ký lại."
-                        }
+                        if (context.isEmpty() || context !in classes) unresolved += needle.id
                     }
                     if (end) break
                     tail = chunk.takeLast(CONTEXT * 2)
                 }
             }
+            if (unresolved.isNotEmpty()) issue(entry.name, "phát hiện định danh ${unresolved.joinToString()} trong native, ngoài tham chiếu lớp JNI đã biết. Cần xử lý riêng thư viện này; không xuất APK và không tự chuyển sang Ký lại.")
+            } catch (e: Exception) { issue(entry.name, e.message ?: e.javaClass.simpleName) }
         }
         libraries.size
     }

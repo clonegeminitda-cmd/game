@@ -29,10 +29,85 @@ class EngineTest {
             module.zipEntryMap.add(ByteInputSource(bytes, "lib/x86_64/libnativefixture.so")); module.writeApk(file)
         }
     }
+    @Test fun accountTypeReferencesAndAliasesResolveAcrossConfigurations() {
+        val file = fresh("account-reference-clone.apk")
+        val report = ApkEngine.build(sample, file, Mode.CLONE, target, "Mẫu tài nguyên", identity)
+        assertTrue(report.changes.any { it.contains("fixed.account.sample → $target.account.") })
+        assertTrue(report.changes.any { it.contains("fixed.account.sample.vi → $target.account.") })
+        ApkModule.loadApkFile(file).use { module ->
+            val xmls = module.listResFiles().filter { it.isBinaryXml }
+            val accounts = xmls.flatMap { res -> res.readAsXmlDocument().recursiveElements().asSequence().filter { it.name in setOf("account-authenticator", "sync-adapter") }.toList() }
+            assertEquals(2, accounts.size)
+            accounts.forEach { e ->
+                val attr = e.searchAttributeByName("accountType")
+                assertEquals(com.reandroid.arsc.value.ValueType.REFERENCE, attr.valueType)
+                val values = ResourceIdentifiers.values(module, attr, "test")
+                assertEquals(2, values.size)
+                assertTrue(values.all { it.startsWith("$target.account.") })
+            }
+            val alias = module.tableBlock.getLocalResource(target, "string", "account_alias")
+            assertTrue(alias.iterator().asSequence().any { it.valueType == com.reandroid.arsc.value.ValueType.REFERENCE })
+        }
+        val audit = ApkAudit.scan(sample, Mode.CLONE, target, "Mẫu")
+        assertEquals(0, audit.errors, audit.text())
+    }
+    @Test fun rejectsMissingAndCyclicResourceReferencesWithoutOutput() {
+        listOf(false, true).forEach { cyclic ->
+            val input = variant("account-bad-$cyclic.apk") { module ->
+                val alias = module.tableBlock.getLocalResource(original, "string", "account_alias")
+                alias.iterator().asSequence().forEach { it.setValueAsReference(if (cyclic) alias.resourceId else 0x7f7fffff) }
+            }
+            val output = fresh("must-not-exist-account-$cyclic.apk")
+            val e = assertFails { ApkEngine.build(input, output, Mode.CLONE, target, "X", identity) }
+            assertTrue(e.message.orEmpty().contains("authenticator.xml"), e.message)
+            assertTrue(e.message.orEmpty().contains(if (cyclic) "vòng lặp" else "không tìm thấy"), e.message)
+            assertFalse(output.exists()); assertFalse(File(output.path + ".pending").exists())
+        }
+    }
+    @Test fun auditCollectsIndependentErrorsWithoutCreatingApk() {
+        val base = ZipFile(nativeSample).use { it.getInputStream(it.getEntry("lib/x86_64/libnativefixture.so")).readBytes() }
+        val broken = variant("multi-errors.apk") { module ->
+            module.androidManifest.manifestElement.getOrCreateAndroidAttribute("sharedUserId", 0x0101000b).setValueAsString("vn.shared.sample")
+            module.androidManifest.applicationElement.getOrCreateAndroidAttribute("isSplitRequired", 0x01010591).setValueAsBoolean(true)
+            module.androidManifest.applicationElement.getOrCreateAndroidAttribute("name", 0x01010003).apply { valueType = com.reandroid.arsc.value.ValueType.REFERENCE; data = 0x7f7fffff }
+            val alias = module.tableBlock.getLocalResource(original, "string", "account_alias")
+            alias.iterator().asSequence().forEach { it.setValueAsReference(alias.resourceId) }
+            listOf("assets/config-one.json", "assets/config-two.json").forEach { module.zipEntryMap.add(ByteInputSource("{\"package\":\"$original\"}".toByteArray(), it)) }
+            listOf("lib/x86_64/libfirst.so", "lib/x86_64/libsecond.so").forEach { module.zipEntryMap.add(ByteInputSource(base + byteArrayOf(0) + original.toByteArray() + byteArrayOf(0), it)) }
+            module.zipEntryMap.add(ByteInputSource(byteArrayOf(0x7f,0x45,0x4c,0x46), "lib/arm64-v8a/libbroken.so"))
+        }
+        val before = ApkEngine.sha256(broken)
+        val audit = ApkAudit.scan(broken, Mode.CLONE, target, "X")
+        assertTrue(audit.errors >= 9, audit.text())
+        val text = audit.text()
+        listOf("sharedUserId", "split", "android:name", "authenticator.xml", "config-one.json", "config-two.json", "libfirst.so", "libsecond.so", "libbroken.so").forEach { assertTrue(text.contains(it, true), it + "\n" + text) }
+        assertEquals(before, ApkEngine.sha256(broken))
+        assertTrue(text.contains("Thư viện .so đã khảo sát: 3"))
+        File(out, "multi-errors-report.txt").writeText(text)
+        val corruptManifest = fresh("manifest-corrupt-multi.apk")
+        java.util.zip.ZipOutputStream(corruptManifest.outputStream()).use { output ->
+            ZipFile(broken).use { zip -> zip.entries().asSequence().filter { !it.isDirectory }.forEach { entry ->
+                output.putNextEntry(java.util.zip.ZipEntry(entry.name))
+                if (entry.name == "AndroidManifest.xml") output.write(byteArrayOf(1,2,3,4)) else zip.getInputStream(entry).use { it.copyTo(output) }
+                output.closeEntry()
+            } }
+        }
+        val fallback = ApkAudit.scan(corruptManifest, Mode.CLONE, target, "X")
+        assertTrue(fallback.errors >= 2, fallback.text())
+        assertTrue(fallback.text().contains("libbroken.so"))
+        assertTrue(fallback.text().contains("DEX kiểm tra độc lập"))
+    }
+    @Test fun auditResignDoesNotRequireChangingAccountResources() {
+        val audit = ApkAudit.scan(sample, Mode.RESIGN, "", "")
+        assertEquals(0, audit.errors, audit.text())
+        assertTrue(audit.issues.any { it.warning && it.message.contains("Ký lại giữ nguyên package") })
+    }
     @Test fun cloneRealNativeApkKeepsJniNamespaceAndLibrary() {
         val before = ApkEngine.sha256(nativeSample)
         val file = fresh("native-clone.apk")
         val target = "vn.apktachgoc.nativesample.tachgoc"
+        val audit = ApkAudit.scan(nativeSample, Mode.CLONE, target, "Native")
+        assertEquals(0, audit.errors, audit.text())
         val report = ApkEngine.build(nativeSample, file, Mode.CLONE, target, "Native • Bản riêng", identity)
         assertEquals(target, ApkEngine.inspect(file).packageName)
         assertEquals(Mode.CLONE, report.mode)

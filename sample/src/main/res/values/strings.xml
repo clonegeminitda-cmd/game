@@ -3,4 +3,6 @@
     <string name="own_package">vn.apktachgoc.sample</string>
     <string name="class_name">vn.apktachgoc.sample.MainActivity</string>
     <string name="own_uri">content://vn.apktachgoc.sample.notes/session</string>
+    <string name="account_type">fixed.account.sample</string>
+    <item type="string" name="account_alias">@string/account_type</item>
 </resources>

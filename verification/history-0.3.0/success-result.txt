@@ -1,0 +1,2 @@
+PASS: service kiểm tra toàn bộ, sửa accountType qua @string/bí danh, tạo/ký/xác minh APK; lịch sử SUCCESS và auditErrors=0.
+Output SHA256=9a419693622cca8182df8860785fc389d0d21d810d78846a52ddbaf3da8a0b58

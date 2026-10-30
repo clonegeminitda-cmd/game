@@ -1,0 +1,1 @@
+PASS: original and clone installed together; MainActivity loads resources and resolves accountType alias to original/new independent identifiers on Android.

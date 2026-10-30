@@ -1,0 +1,88 @@
+BÁO CÁO APK TÁCH GỐC 0.3.0
+Mã phiên: 95af8c5d-16b2-4081-9e9c-582f1da60dcf
+Thời gian: 2026-10-30T06:10:54Z
+Thao tác: Kiểm tra toàn bộ
+Trạng thái: Đã quét: 9 lỗi chặn
+Giai đoạn cuối: Đã kiểm tra: 9 lỗi chặn, 1 cảnh báo (100%)
+
+APK nguồn: history-multi-errors.apk
+Tên ứng dụng: 
+Package: chưa đọc được
+Phiên bản: chưa đọc được
+Kích thước: 817021 byte
+SHA-256 nguồn: 95ce934d103dafc6171da0c9fa79ce6d19c3328d6ba30549bbc302830e3fc477
+Package đích: vn.apktachgoc.sample.tachgoc
+
+Máy: unknown Android SDK built for x86_64
+Android: 8.0.0 / API 26
+ABI máy: x86_64, x86
+Giới hạn heap báo bởi Android: 512 MB
+
+KHẢO SÁT CẤU TRÚC APK
+Mục ZIP: 20; dung lượng giải nén: 2475856 byte
+DEX tiêu chuẩn: 3; classes.dex (2327064 byte), classes2.dex (1512 byte), classes3.dex (10796 byte)
+Thư viện native: 3; ABI: x86_64, arm64-v8a
+  lib/x86_64/libfirst.so (50542 byte; ZIP method=8)
+  lib/x86_64/libsecond.so (50542 byte; ZIP method=8)
+  lib/arm64-v8a/libbroken.so (4 byte; ZIP method=8)
+Manifest: package=vn.apktachgoc.sample; version=1.0 (1); minSdk=26; split=false
+manifest sharedUserId: STRING / vn.shared.sample
+Package tài nguyên: 1
+activity: 1
+service: 0
+receiver: 1
+provider: 1
+uses-split: 0
+overlay: 0
+instrumentation: 0
+Provider authority: STRING / vn.apktachgoc.sample.notes;fixed.sample.authority
+res/xml/authenticator.xml <account-authenticator> android:accountType: REFERENCE / 0x7f010000
+  Cần xử lý: res/xml/authenticator.xml android:accountType: vòng lặp tham chiếu tài nguyên 0x7f010000 → 0x7f010000.
+res/xml/sync_adapter.xml <sync-adapter> android:accountType: REFERENCE / 0x7f010001
+  Giá trị định danh: fixed.account.sample, fixed.account.sample.vi
+Đã khảo sát 2/2 XML; authenticator/sync tìm thấy: 2.
+Đây là chẩn đoán cấu trúc, không xác nhận app/game chạy được. Native có định danh mã hóa/tạo động, DRM hoặc kiểm tra chữ ký có thể cần xử lý riêng.
+
+
+KIỂM TRA TOÀN BỘ APK
+Lỗi chặn: 9; cảnh báo: 1.
+Các kiểm tra độc lập tiếp tục sau lỗi; không tạo hay ký APK trong bước này.
+
+ZIP: 20 mục; APK 817021 byte.
+Đã đọc/đối chiếu CRC: 20/20 mục.
+Package nguồn: vn.apktachgoc.sample; version=1.0 (1); minSdk=26.
+XML nhị phân đã đọc: 2/2; accountType gồm chuỗi, @string, bí danh và các cấu hình.
+Đã khảo sát 3 DEX; 1048 lớp (namespace giữ nguyên).
+Asset/raw đã khảo sát: 2.
+Thư viện .so đã khảo sát: 3 (ELF/ABI và định danh dạng rõ).
+
+DANH SÁCH PHÁT HIỆN
+1. LỖI [android:sharedUserId] Shared UID chưa hỗ trợ đổi định danh/ký mới.
+2. LỖI [<application>] Base APK yêu cầu split.
+3. LỖI [<application> android:name] Kiểu REFERENCE / 0x7f7fffff chưa hỗ trợ ở định danh này.
+4. LỖI [res/xml/authenticator.xml <account-authenticator> android:accountType] res/xml/authenticator.xml android:accountType: vòng lặp tham chiếu tài nguyên 0x7f010000 → 0x7f010000.
+5. LỖI [assets/config-one.json] Định danh trong asset/raw cần bộ xử lý theo định dạng: vn.apktachgoc.sample.
+6. LỖI [assets/config-two.json] Định danh trong asset/raw cần bộ xử lý theo định dạng: vn.apktachgoc.sample.
+7. LỖI [lib/x86_64/libfirst.so] phát hiện định danh vn.apktachgoc.sample trong native, ngoài tham chiếu lớp JNI đã biết. Cần xử lý riêng thư viện này; không xuất APK và không tự chuyển sang Ký lại.
+8. LỖI [lib/x86_64/libsecond.so] phát hiện định danh vn.apktachgoc.sample trong native, ngoài tham chiếu lớp JNI đã biết. Cần xử lý riêng thư viện này; không xuất APK và không tự chuyển sang Ký lại.
+9. LỖI [lib/arm64-v8a/libbroken.so] Thư viện lib/arm64-v8a/libbroken.so không phải ELF dùng chung hợp lệ hoặc ABI chưa hỗ trợ; không xuất APK.
+10. CẢNH BÁO [Giới hạn chạy thử] Quét cấu trúc không xác nhận game/đăng nhập/DRM chạy sau khi đổi package hoặc ký.
+
+Không thể kết luận mọi lỗi chỉ bằng quét tĩnh. Giới hạn an toàn có thể ngăn đọc một mục hỏng/quá lớn; lỗi đóng gói/ký/chạy chỉ biết khi tới bước tương ứng. Native mã hóa/tạo định danh động, dịch vụ đăng nhập, DRM và chống gian lận chưa được xác nhận.
+
+
+CÁC BƯỚC XỬ LÝ (tối đa 100 mốc gần nhất)
++0s 1% Kiểm tra toàn bộ: ZIP và CRC từng mục
++0s 2% Kiểm tra CRC 1/20
++1s 24% Kiểm tra manifest và từng định danh
++5s 27% Kiểm tra XML 1/2: res/xml/authenticator.xml
++5s 43% Kiểm tra DEX 1/3: classes.dex
++7s 48% Kiểm tra DEX 2/3: classes2.dex
++8s 53% Kiểm tra DEX 3/3: classes3.dex
++8s 59% Kiểm tra asset/raw 1/2
++8s 79% Kiểm tra native 1/3: lib/x86_64/libfirst.so
++9s 88% Kiểm tra native 2/3: lib/x86_64/libsecond.so
++9s 98% Kiểm tra native 3/3: lib/arm64-v8a/libbroken.so
++9s 100% Đã kiểm tra: 9 lỗi chặn, 1 cảnh báo
+
+Báo cáo chỉ lưu cấu trúc APK và kết quả xử lý, không ghi khóa ký riêng, mật khẩu hoặc phiên đăng nhập. Lịch sử lưu tối đa 50 phiên trên máy; không tự gửi. APK đầu vào được giữ nguyên.

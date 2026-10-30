@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="vn.apktachgoc.core.EngineTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-10-30T05:57:22" hostname="fce5e3d0dff8" time="10.869">
+  <properties/>
+  <testcase name="auditResignDoesNotRequireChangingAccountResources" classname="vn.apktachgoc.core.EngineTest" time="0.766"/>
+  <testcase name="resignRealNativeApkPreservesElfAndEveryDex" classname="vn.apktachgoc.core.EngineTest" time="1.73"/>
+  <testcase name="refusesSplitAndRequiredSplitBase" classname="vn.apktachgoc.core.EngineTest" time="0.304"/>
+  <testcase name="refusesUnresolvedAssetAndCleansTemporaryFiles" classname="vn.apktachgoc.core.EngineTest" time="0.714"/>
+  <testcase name="accountTypeReferencesAndAliasesResolveAcrossConfigurations" classname="vn.apktachgoc.core.EngineTest" time="0.838"/>
+  <testcase name="rejectsMissingAndCyclicResourceReferencesWithoutOutput" classname="vn.apktachgoc.core.EngineTest" time="0.984"/>
+  <testcase name="rejectsMalformedInputPackage" classname="vn.apktachgoc.core.EngineTest" time="0.202"/>
+  <testcase name="rejectsNativeIdentifiersAcrossChunksAndEncodingsWithoutOutput" classname="vn.apktachgoc.core.EngineTest" time="0.606"/>
+  <testcase name="refusesMalformedNativeCloneWithoutPublishingOutput" classname="vn.apktachgoc.core.EngineTest" time="0.221"/>
+  <testcase name="cloneRealNativeApkKeepsJniNamespaceAndLibrary" classname="vn.apktachgoc.core.EngineTest" time="0.551"/>
+  <testcase name="cloneRealSampleAndVerifyReferences" classname="vn.apktachgoc.core.EngineTest" time="0.732"/>
+  <testcase name="auditCollectsIndependentErrorsWithoutCreatingApk" classname="vn.apktachgoc.core.EngineTest" time="0.241"/>
+  <testcase name="sameKeySupportsRepeatedCloneSigning" classname="vn.apktachgoc.core.EngineTest" time="0.746"/>
+  <testcase name="resignPreservesPackageAndDex" classname="vn.apktachgoc.core.EngineTest" time="0.434"/>
+  <testcase name="rejectsOverwriteAndInvalidPackage" classname="vn.apktachgoc.core.EngineTest" time="0.544"/>
+  <testcase name="encryptedKeyRoundTripAndWrongPassword" classname="vn.apktachgoc.core.EngineTest" time="1.252"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

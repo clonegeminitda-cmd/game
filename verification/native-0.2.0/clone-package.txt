@@ -1,0 +1,58 @@
+Activity Resolver Table:
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        a29e736 vn.apktachgoc.nativesample.tachgoc/vn.apktachgoc.nativesample.MainActivity filter 769ed89
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.LAUNCHER"
+
+Key Set Manager:
+  [vn.apktachgoc.nativesample.tachgoc]
+      Signing KeySets: 9
+
+Packages:
+  Package [vn.apktachgoc.nativesample.tachgoc] (20e1637):
+    userId=10073
+    pkg=Package{4e67a4 vn.apktachgoc.nativesample.tachgoc}
+    codePath=/data/app/vn.apktachgoc.nativesample.tachgoc-PuRkgjdEMZ6SReH0q-oH6w==
+    resourcePath=/data/app/vn.apktachgoc.nativesample.tachgoc-PuRkgjdEMZ6SReH0q-oH6w==
+    legacyNativeLibraryDir=/data/app/vn.apktachgoc.nativesample.tachgoc-PuRkgjdEMZ6SReH0q-oH6w==/lib
+    primaryCpuAbi=x86_64
+    secondaryCpuAbi=null
+    versionCode=1 minSdk=26 targetSdk=35
+    versionName=1.0-native
+    splits=[base]
+    apkSigningVersion=2
+    applicationInfo=ApplicationInfo{1ce490d vn.apktachgoc.nativesample.tachgoc}
+    flags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ]
+    privateFlags=[ PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION ]
+    dataDir=/data/user/0/vn.apktachgoc.nativesample.tachgoc
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    timeStamp=2026-10-30 01:03:37
+    firstInstallTime=2026-10-30 01:03:39
+    lastUpdateTime=2026-10-30 01:03:39
+    signatures=PackageSignatures{c2540c2 [5c368d8b]}
+    installPermissionsFixed=true installStatus=1
+    pkgFlags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ]
+    User 0: ceDataInode=99013 installed=true hidden=false suspended=false stopped=false notLaunched=false enabled=0 instant=false
+      runtime permissions:
+
+Package Changes:
+  Sequence number=10
+  User 0:
+    seq=1, package=vn.apktachgoc.test
+    seq=5, package=vn.apktachgoc
+    seq=8, package=vn.apktachgoc.nativesample
+    seq=9, package=vn.apktachgoc.nativesample.tachgoc
+
+
+Dexopt state:
+  [vn.apktachgoc.nativesample.tachgoc]
+    Instruction Set: x86_64
+      path: /data/app/vn.apktachgoc.nativesample.tachgoc-PuRkgjdEMZ6SReH0q-oH6w==/base.apk
+      status: /data/app/vn.apktachgoc.nativesample.tachgoc-PuRkgjdEMZ6SReH0q-oH6w==/oat/x86_64/base.odex[status=kOatUpTo
+      Date, compilation_filter=quicken]
+
+
+Compiler stats:
+  [vn.apktachgoc.nativesample.tachgoc]
+     base.apk - 2580

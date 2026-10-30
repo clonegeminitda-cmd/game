@@ -14,6 +14,7 @@ import org.junit.Test
 
 class EngineTest {
     private val sample = File(System.getProperty("sampleApk"))
+    private val nativeSample = File(System.getProperty("nativeApk"))
     private val out = File("build/test-artifacts").apply { mkdirs() }
     private val identity by lazy { SigningKeys.create() }
     private val original = "vn.apktachgoc.sample"
@@ -21,6 +22,44 @@ class EngineTest {
     private fun fresh(name: String) = File(out, name).apply { delete() }
     private fun variant(name: String, edit: (ApkModule) -> Unit): File = fresh(name).also { file ->
         ApkModule.loadApkFile(sample).use { module -> module.setApkSignatureBlock(null); edit(module); module.writeApk(file) }
+    }
+    private fun nativeVariant(name: String, bytes: ByteArray): File = fresh(name).also { file ->
+        ApkModule.loadApkFile(nativeSample).use { module ->
+            module.setApkSignatureBlock(null)
+            module.zipEntryMap.add(ByteInputSource(bytes, "lib/x86_64/libnativefixture.so")); module.writeApk(file)
+        }
+    }
+    @Test fun cloneRealNativeApkKeepsJniNamespaceAndLibrary() {
+        val before = ApkEngine.sha256(nativeSample)
+        val file = fresh("native-clone.apk")
+        val target = "vn.apktachgoc.nativesample.tachgoc"
+        val report = ApkEngine.build(nativeSample, file, Mode.CLONE, target, "Native • Bản riêng", identity)
+        assertEquals(target, ApkEngine.inspect(file).packageName)
+        assertEquals(Mode.CLONE, report.mode)
+        assertEquals(before, ApkEngine.sha256(nativeSample))
+        ApkModule.loadApkFile(file).use { module ->
+            assertEquals("vn.apktachgoc.nativesample.MainActivity", module.androidManifest.manifestElement.recursiveElements().asSequence().first { it.name == "activity" }.searchAttributeByName("name").valueAsString)
+        }
+        ZipFile(nativeSample).use { a -> ZipFile(file).use { b ->
+            val name = "lib/x86_64/libnativefixture.so"
+            assertContentEquals(a.getInputStream(a.getEntry(name)).readBytes(), b.getInputStream(b.getEntry(name)).readBytes())
+        } }
+        assertTrue(ApkVerifier.Builder(file).build().verify().isVerified)
+        assertTrue(report.changes.any { it.startsWith("Native:") })
+        assertTrue(report.changes.any { it.contains("SHA-256") })
+    }
+    @Test fun rejectsNativeIdentifiersAcrossChunksAndEncodingsWithoutOutput() {
+        val base = ZipFile(nativeSample).use { it.getInputStream(it.getEntry("lib/x86_64/libnativefixture.so")).readBytes() }
+        listOf(Charsets.UTF_8, Charsets.UTF_16LE, Charsets.UTF_16BE).forEachIndexed { index, charset ->
+            val id = "vn.apktachgoc.nativesample"
+            // Force a match crossing a streaming chunk, including odd UTF-16 alignment.
+            val bytes = base + ByteArray(65530 - base.size) + id.toByteArray(charset) + ByteArray(9000)
+            val input = nativeVariant("native-id-$index.apk", bytes)
+            val output = fresh("must-not-exist-native-id-$index.apk")
+            val error = assertFails { ApkEngine.build(input, output, Mode.CLONE, "$id.tachgoc", "X", identity) }
+            assertTrue(error.message.orEmpty().contains("phát hiện định danh"), error.message)
+            assertFalse(output.exists()); assertFalse(File(output.path + ".pending").exists()); assertFalse(File(output.path + ".unsigned").exists())
+        }
     }
     @Test fun cloneRealSampleAndVerifyReferences() {
         val before = ApkEngine.sha256(sample)
@@ -107,7 +146,7 @@ class EngineTest {
         val output = fresh("must-not-exist-split.apk")
         assertFails { ApkEngine.build(split, output, Mode.CLONE, target, "X", identity) }; assertFalse(output.exists())
     }
-    @Test fun refusesNativeCloneWithoutPublishingOutput() {
+    @Test fun refusesMalformedNativeCloneWithoutPublishingOutput() {
         val native = variant("native.apk") { it.zipEntryMap.add(ByteInputSource(byteArrayOf(0x7f, 0x45, 0x4c, 0x46), "lib/arm64-v8a/libfixture.so")) }
         assertTrue(ApkEngine.inspect(native).nativeCode)
         val output = fresh("must-not-exist-native.apk")

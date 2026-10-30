@@ -1,0 +1,4 @@
+lib/x86_64/libnativefixture.so
+Original SHA256=b099339b5ec55a38811103de469b2f00babc8fb1512b6cd073e2a66fb3d90adc
+Clone SHA256=b099339b5ec55a38811103de469b2f00babc8fb1512b6cd073e2a66fb3d90adc
+Stored method=0

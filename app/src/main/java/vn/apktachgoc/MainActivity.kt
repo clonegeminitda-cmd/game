@@ -74,7 +74,7 @@ class MainActivity : Activity() {
         frame.setOnApplyWindowInsetsListener { v, insets -> v.setPadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight, insets.systemWindowInsetBottom); insets }
         setContentView(frame)
         val header = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(22), dp(23), dp(22), dp(18)); setBackgroundColor(Color.rgb(16, 43, 38)); frame.addView(this) }
-        text(header, "CÔNG CỤ NGOẠI TUYẾN • 0.1.1", 11f, Color.rgb(154, 206, 181))
+        text(header, "CÔNG CỤ NGOẠI TUYẾN • 0.2.0", 11f, Color.rgb(154, 206, 181))
         text(header, "APK Tách Gốc", 29f, Color.WHITE).setTypeface(null, Typeface.BOLD)
         text(header, "Ký lại. Tạo bản sao độc lập. Không cần root.", 14f, Color.rgb(206, 224, 214))
         val scroll = ScrollView(this).apply { isFillViewport = true; frame.addView(this, LinearLayout.LayoutParams(-1, 0, 1f)) }
@@ -88,8 +88,8 @@ class MainActivity : Activity() {
         card().also { c ->
             title(c, "2. Chế độ xử lý")
             modes = RadioGroup(this).apply { c.addView(this) }
-            signRadio = RadioButton(this).apply { id = View.generateViewId(); text = "Ký lại APK (hỗ trợ .so)"; minHeight = dp(48); modes.addView(this); inputs += this }
-            cloneRadio = RadioButton(this).apply { id = View.generateViewId(); text = "Tạo bản tách gốc"; minHeight = dp(48); modes.addView(this); inputs += this }
+            cloneRadio = RadioButton(this).apply { id = View.generateViewId(); text = "Tạo bản tách gốc — cài song song"; minHeight = dp(48); modes.addView(this); inputs += this }
+            signRadio = RadioButton(this).apply { id = View.generateViewId(); text = "Chỉ ký lại — cùng package, không cài song song"; minHeight = dp(48); modes.addView(this); inputs += this }
             cloneFields = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; c.addView(this) }
             text(cloneFields, "Tên ứng dụng mới", 13f, muted)
             label = field(cloneFields, "Ví dụ: Ghi chú • Bản riêng")
@@ -144,14 +144,11 @@ class MainActivity : Activity() {
         val busy = state.busy || uiBusy
         inputs.forEach { it.isEnabled = !busy }
         val hasNative = state.info?.nativeCode == true
-        cloneRadio.isEnabled = !busy && !hasNative
-        cloneRadio.text = if (hasNative) "Tạo bản tách gốc (chưa hỗ trợ .so)" else "Tạo bản tách gốc"
-        if (hasNative && modes.checkedRadioButtonId != signRadio.id) modes.check(signRadio.id)
         updateModeNote(hasNative)
         buildButton.isEnabled = !busy && state.source != null && state.info != null
         buildButton.text = if (modes.checkedRadioButtonId == signRadio.id) "Ký lại APK${if (hasNative) " có .so" else ""}" else "Tạo và ký APK"
         if (state.source != null && state.info != null) {
-            metadata.text = "${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}" + if (state.info.nativeCode) "\nCó thư viện .so • đã chọn Ký lại APK" else ""
+            metadata.text = "${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}" + if (state.info.nativeCode) "\nCó thư viện .so • tách gốc sẽ kiểm tra native trước khi xuất" else ""
             if (seenInput !== state.source) {
                 if (seenInput != null || label.text.isBlank()) label.setText("${state.name} • Bản riêng".take(80))
                 if (seenInput != null || packageNameField.text.isBlank()) packageNameField.setText(state.info.packageName.lowercase() + ".tachgoc")
@@ -163,14 +160,18 @@ class MainActivity : Activity() {
         error.text = state.error ?: ""; error.visibility = if (state.error != null) View.VISIBLE else View.GONE
         if (state.report != null) currentReport = state.report
         outputButtons.forEach { it.isEnabled = !busy && currentReport?.file?.exists() == true }
+        if (currentReport == null) outputButtons.last().text = "Cài APK kết quả"
         currentReport?.let { report ->
             result.visibility = View.VISIBLE
-            result.text = "APK đã xác minh: ${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Hãy cài thử để kiểm tra ứng dụng.\n" + report.changes.joinToString("\n")
+            val kind = if (report.mode == Mode.CLONE) "BẢN TÁCH GỐC • PACKAGE MỚI" else "CHỈ KÝ LẠI • KHÔNG CÀI SONG SONG"
+            result.text = "$kind\n${report.packageName}\n${"%.1f".format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Chưa xác nhận ứng dụng đích chạy được.\n" + report.changes.joinToString("\n")
+            outputButtons.last().text = if (report.mode == Mode.CLONE) "Cài bản sao (package mới)" else "Cài APK ký lại (cùng package)"
         }
     }
     private fun updateModeNote(native: Boolean) {
         val clone = modes.checkedRadioButtonId == cloneRadio.id
-        modeNote.text = if (clone) "Bản sao là APK cài độc lập, không dùng không gian ảo. Chế độ này chưa hỗ trợ thư viện native (.so)."
+        modeNote.text = if (clone) "Đổi package để Android nhận là ứng dụng khác, cài cạnh bản gốc và có dữ liệu riêng." +
+            if (native) "\nNative: giữ nguyên .so và tên lớp JNI. Nếu phát hiện định danh gốc trong native cần sửa, công cụ dừng và nêu tệp. Không đảm bảo game, DRM hay đăng nhập chạy sau khi đổi package/ký." else "\nBản sao là APK độc lập, không dùng không gian ảo."
             else (if (native) "Thư viện .so được giữ nguyên và đối chiếu SHA-256 từng tệp.\n" else "") + "Ký lại giữ package cũ, không tạo bản cài song song. Android không cho cập nhật bản gốc có chữ ký khác."
         if (::buildButton.isInitialized) buildButton.text = if (clone) "Tạo và ký APK" else "Ký lại APK${if (native) " có .so" else ""}"
     }
@@ -185,7 +186,6 @@ class MainActivity : Activity() {
     }
     private fun startBuild() {
         val clone = modes.checkedRadioButtonId == cloneRadio.id
-        if (clone && AppState.snapshot.info?.nativeCode == true) { message("Chọn Ký lại APK", "APK có .so được hỗ trợ ký lại, giữ nguyên thư viện và package. Tách gốc native chưa được hỗ trợ."); return }
         val pkg = packageNameField.text.toString().trim()
         if (clone && (!ApkEngine.validPackage(pkg) || pkg == AppState.snapshot.info?.packageName)) { packageNameField.error = "Nhập package hợp lệ, khác bản gốc"; return }
         if (clone && label.text.isBlank()) { label.error = "Nhập tên bản sao"; return }
@@ -272,13 +272,13 @@ class MainActivity : Activity() {
         if (AppState.snapshot.report != null) return
         val prefs = getSharedPreferences("last", MODE_PRIVATE)
         val file = prefs.getString("path", null)?.let { File(it) } ?: return
-        if (file.exists() && file.parentFile?.canonicalPath == File(filesDir, "results").canonicalPath) currentReport = BuildReport(file, prefs.getString("package", "") ?: "", prefs.getString("hash", "") ?: "", prefs.getString("changes", "").orEmpty().lines().filter { it.isNotBlank() }, prefs.getString("cert", "") ?: "")
+        if (file.exists() && file.parentFile?.canonicalPath == File(filesDir, "results").canonicalPath) currentReport = BuildReport(file, prefs.getString("package", "") ?: "", prefs.getString("hash", "") ?: "", prefs.getString("changes", "").orEmpty().lines().filter { it.isNotBlank() }, prefs.getString("cert", "") ?: "", if (prefs.getString("mode", "RESIGN") == "CLONE") Mode.CLONE else Mode.RESIGN)
     }
     private fun message(title: String, body: String) { if (!isFinishing && !isDestroyed) AlertDialog.Builder(this).setTitle(title).setMessage(body).setPositiveButton("Đóng", null).show() }
     private fun focusScreen() {
         screenRoot.requestFocus()
         (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).hideSoftInputFromWindow(screenRoot.windowToken, 0)
     }
-    private fun showLimits() = message("Hỗ trợ của bản 0.1.1", "• APK đơn có DEX thông thường; tách gốc giữ namespace lớp và sửa định danh theo bảng ánh xạ.\n• Chặn split, sharedUserId, thư viện dùng chung, native khi tách gốc, mã nhúng và tài nguyên chưa hỗ trợ.\n• Dữ liệu hoặc phiên đăng nhập bản gốc không được sao chép.\n• Đăng nhập Google, DRM, app links và kiểm tra chữ ký có thể hỏng sau khi ký lại. Không vượt chống gian lận.\n• Xác minh chữ ký không đảm bảo ứng dụng chạy được. Luôn cài thử.\n• Chỉ xử lý APK bạn có quyền sử dụng và sửa đổi.")
+    private fun showLimits() = message("Hỗ trợ của bản 0.2.0", "• Tách gốc đổi package để cài song song; ký lại giữ package nên không tạo ứng dụng khác.\n• APK đơn, DEX thông thường và ELF native không cần sửa định danh bên trong. Giữ nguyên namespace lớp JNI và byte .so; đối chiếu SHA-256 sau đóng gói.\n• Chặn định danh native chưa xử lý, ELF không hợp lệ, split, sharedUserId, mã nhúng và tài nguyên chưa hỗ trợ. Không tự chuyển sang ký lại nếu tách thất bại.\n• Kiểm tra tĩnh không phát hiện được mọi định danh mã hóa hoặc tạo lúc chạy. Chưa kiểm thử Liên Quân hay các game khác.\n• Dữ liệu và đăng nhập bản gốc không được sao chép. Google, DRM, app links và kiểm tra chữ ký có thể hỏng. Không vượt chống gian lận.\n• Xác minh cấu trúc/chữ ký không đảm bảo ứng dụng chạy. Hãy cài thử.\n• Chỉ xử lý APK bạn có quyền sử dụng và sửa đổi.")
     override fun onDestroy() { if (isFinishing) { pendingKey?.fill(0); pendingKey = null }; worker.shutdown(); super.onDestroy() }
 }

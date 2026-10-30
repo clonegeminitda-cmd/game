@@ -1,0 +1,58 @@
+Activity Resolver Table:
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        7cce455 vn.apktachgoc.nativesample/.MainActivity filter 822f5c7
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.LAUNCHER"
+
+Key Set Manager:
+  [vn.apktachgoc.nativesample]
+      Signing KeySets: 5
+
+Packages:
+  Package [vn.apktachgoc.nativesample] (e8d4e6a):
+    userId=10072
+    pkg=Package{adf5b vn.apktachgoc.nativesample}
+    codePath=/data/app/vn.apktachgoc.nativesample-qHrHJ5GxIy55Tc_fL9S63A==
+    resourcePath=/data/app/vn.apktachgoc.nativesample-qHrHJ5GxIy55Tc_fL9S63A==
+    legacyNativeLibraryDir=/data/app/vn.apktachgoc.nativesample-qHrHJ5GxIy55Tc_fL9S63A==/lib
+    primaryCpuAbi=x86_64
+    secondaryCpuAbi=null
+    versionCode=1 minSdk=26 targetSdk=35
+    versionName=1.0-native
+    splits=[base]
+    apkSigningVersion=2
+    applicationInfo=ApplicationInfo{1103f8 vn.apktachgoc.nativesample}
+    flags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ]
+    privateFlags=[ PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION ]
+    dataDir=/data/user/0/vn.apktachgoc.nativesample
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    timeStamp=2026-10-30 01:03:26
+    firstInstallTime=2026-10-30 01:03:34
+    lastUpdateTime=2026-10-30 01:03:34
+    signatures=PackageSignatures{4470d1 [eb766ce7]}
+    installPermissionsFixed=true installStatus=1
+    pkgFlags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ]
+    User 0: ceDataInode=99012 installed=true hidden=false suspended=false stopped=false notLaunched=false enabled=0 instant=false
+      runtime permissions:
+
+Package Changes:
+  Sequence number=10
+  User 0:
+    seq=1, package=vn.apktachgoc.test
+    seq=5, package=vn.apktachgoc
+    seq=8, package=vn.apktachgoc.nativesample
+    seq=9, package=vn.apktachgoc.nativesample.tachgoc
+
+
+Dexopt state:
+  [vn.apktachgoc.nativesample]
+    Instruction Set: x86_64
+      path: /data/app/vn.apktachgoc.nativesample-qHrHJ5GxIy55Tc_fL9S63A==/base.apk
+      status: /data/app/vn.apktachgoc.nativesample-qHrHJ5GxIy55Tc_fL9S63A==/oat/x86_64/base.odex[status=kOatUpToDate, co
+      mpilation_filter=quicken]
+
+
+Compiler stats:
+  [vn.apktachgoc.nativesample]
+     base.apk - 6913

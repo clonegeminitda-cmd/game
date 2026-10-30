@@ -1,0 +1,9 @@
+PASS: tạo bản tách gốc native trên Android, package mới; giữ byte .so và APK gốc.
+Input SHA256=af7fdc6aef90f23d00a02c6e825dedd448aeec0dcbf13e06e9bc6d0ce607b990
+Output SHA256=93e2c81d283ff96681d52f04dc3886fb8a59c9df34e44273ce2ee4affbaf8793
+Certificate=2157660c631e77786091b977fc984f5eaf5f577b8c5a99cc4220cdd120c79004
+Tách gốc: package mới vn.apktachgoc.nativesample.tachgoc, cài riêng với vn.apktachgoc.nativesample; dữ liệu và UID do Android cấp riêng.
+Native: đã kiểm tra 1 tệp ELF; giữ nguyên tên lớp JNI và toàn bộ byte .so. Kiểm tra tĩnh chỉ phát hiện tham chiếu định danh dạng rõ, không chứng minh game chạy được.
+vn.apktachgoc.nativesample → vn.apktachgoc.nativesample.tachgoc
+Tên hiển thị → Native • Bản riêng; giữ nguyên namespace lớp DEX; mở rộng tên lớp tương đối.
+Đã đối chiếu SHA-256: giữ nguyên nội dung 1 thư viện .so, căn chỉnh ZIP cho thư viện không nén ở biên 16 KB.

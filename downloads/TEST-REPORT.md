@@ -1,30 +1,29 @@
-# Kiểm thử APK Tách Gốc 0.1.1 — ký lại APK có .so
+# APK Tách Gốc 0.2.0 — tách gốc native có giới hạn
 
-Bản cài thử Android 8.0 trở lên, versionCode 2, cùng chữ ký APK công cụ 0.1.0 để có thể cài cập nhật. Đây là chức năng **ký lại giữ nguyên package**, không phải tách gốc native để cài song song.
+Bản cài thử Android 8.0 trở lên, versionCode 3. Cùng chữ ký công cụ 0.1.x để cài cập nhật và giữ khóa nội bộ. Bản 0.1.1 chỉ ký lại native, không đáp ứng mục tiêu cài song song; 0.2.0 thay đổi phạm vi này.
 
 ## Kết quả đã chạy
 
-- Build Kotlin/Android SDK 35 thành công; Android Lint 0 lỗi, 28 cảnh báo. Xác minh chữ ký APK công cụ hợp lệ.
-- **10/10 kiểm thử JVM qua**, gồm toàn bộ kiểm thử cũ và APK native thật. Kiểm tra package không đổi, mọi DEX và thư viện `.so` giữ nguyên byte, chữ ký hợp lệ, đầu vào không đổi. APK không có package tài nguyên riêng cũng được nhận đúng.
-- Instrumentation `resignRealNativeApkOnAndroid`: **PASS**, 28,902 giây trên emulator **Android 8.0.0 / API 26, x86_64**, không dùng KVM. APK được đọc, đóng gói, ký và xác minh ngay trong Android.
-- APK mẫu có thư viện ELF/JNI thật, biên dịch từ C trong `native-sample/src/main/cpp/nativefixture.c`. Script `native-smoke.sh` cài và chạy bản gốc: lời gọi JNI trả về **73**. Sau khi thay bằng APK ký lại, JNI vẫn trả về **73**. Không có lỗi AndroidRuntime ở lần thử này.
-- Thử cập nhật đè bản gốc bằng chữ ký khác: Android trả `INSTALL_FAILED_UPDATE_INCOMPATIBLE`, đúng giới hạn đã thông báo. Script chỉ gỡ app mẫu trên emulator để tiếp tục kiểm tra APK ký lại.
-- Thư viện `lib/x86_64/libnativefixture.so` trước/sau ký có cùng SHA-256: `0d95f37981c4cf68580e0766ddcc831e29659c139caaa12196ef607644ff6936`. Tất cả 3 DEX của APK mẫu cũng giữ nguyên byte.
-- APK ký lại qua xác minh apksigner v2/v3 và kiểm tra căn chỉnh ZIP `zipalign -c -P 16 4`. `.so` không nén được căn chỉnh ở biên 16 KB; không sửa mã ELF hoặc các định danh bên trong.
-- Thử giao diện: chọn `Mau-Native.apk` qua SAF; ứng dụng tự chọn **Ký lại APK (hỗ trợ .so)**, khóa lựa chọn tách gốc native và hiển thị rõ giữ nguyên package. Bấm **Ký lại APK có .so** tạo đầu ra thành công, có kết quả đối chiếu `.so`.
-- APK tạo qua nút giao diện giống hệt byte với APK ký trong instrumentation. SHA-256 đầu ra: `42c68f1e98944891447cb50e2b8fda8b678d548f3e7f1d501108c25f5396b67d`. Package vẫn là `vn.apktachgoc.nativesample`.
+- Build Kotlin/Android SDK 35 thành công. 12/12 kiểm thử JVM qua, 0 lỗi. Android Lint bản cuối: 0 lỗi, 28 cảnh báo. APK công cụ qua xác minh chữ ký v2 và zipalign.
+- Mẫu thật có ELF/JNI x86_64. C gọi `FindClass("vn/apktachgoc/nativesample/MainActivity")`, giữ namespace lớp gốc, sau đó trả về 73. Có SharedPreferences và receiver thử nghiệm chỉ trong mẫu.
+- Instrumentation `cloneRealNativeApkOnAndroid`: PASS, 28,224 giây trên emulator Android 8.0.0/API 26 x86_64, phần mềm, không KVM. Đọc, đổi package, đóng gói, ký và xác minh ngay trong Android, không dùng máy chủ.
+- Package mới `vn.apktachgoc.nativesample.tachgoc`, khác `vn.apktachgoc.nativesample`. APK đầu vào giữ nguyên SHA-256. Từng byte thư viện `.so` được giữ nguyên; SHA-256 thư viện trước/sau: `b099339b5ec55a38811103de469b2f00babc8fb1512b6cd073e2a66fb3d90adc`.
+- APK do instrumentation tạo: SHA-256 `93e2c81d283ff96681d52f04dc3886fb8a59c9df34e44273ce2ee4affbaf8793`. Qua xác minh chữ ký v2/v3 và zipalign -c -P 16 4.
+- Kho khóa trên emulator đã có từ 0.1.1 được giữ sau cập nhật: fingerprint chứng chỉ `2157660c631e77786091b977fc984f5eaf5f577b8c5a99cc4220cdd120c79004` vẫn trùng kết quả cũ.
+- Thử giao diện thật: chọn APK native qua SAF; lựa chọn tách gốc vẫn được bật và chọn, không tự chuyển sang ký lại. Nút Tạo và ký APK tạo package mới. Đầu ra giao diện SHA-256 `12b445de60a43e3bddc3d0c6856fe9b442ce0a25c06ff45be58b42ef3f9c3536`; tên hiển thị khác mẫu instrumentation nên SHA khác.
+- Trong khi bản gốc vẫn cài, nút Cài bản sao mở Android installer hỏi **Install**, không hỏi cập nhật. Bấm Install: App installed. Mở bản sao: JNI FindClass/nativeValue = 73.
+- `native-clone-smoke.sh` PASS: cài hai package cùng lúc, ghi ORIGINAL_NATIVE và CLONE_NATIVE vào hai vùng dữ liệu riêng, mở cả hai và xác nhận JNI 73. UID bản gốc 10072, bản sao 10073. Gỡ bản gốc, force-stop và mở lại bản sao: JNI 73 và CLONE_NATIVE vẫn còn. Gỡ cả công cụ, force-stop/mở lại bản sao: JNI 73 và CLONE_NATIVE vẫn còn.
+- APK công cụ cuối được cài cập nhật và mở thành công. Sau thử giao diện, chỉ sửa nhãn nút cài bị vô hiệu hóa khi chưa có kết quả để không lưu nhãn ký lại cũ; build/lint lại, cài và mở bản cuối trước khi kiểm tra gỡ công cụ.
+- Kiểm thử JVM gồm: tách gốc mẫu Java/Kotlin và native, ký lại giữ package/DEX/.so, chữ ký, khóa/mật khẩu, split, định danh asset, package lỗi, ELF bị cắt cụt và native chứa định danh chưa xử lý. Các chuỗi native UTF-8/UTF-16LE/UTF-16BE vắt qua ranh giới bộ đệm đều bị từ chối, không công bố file hoặc để lại .pending/.unsigned.
 
-## Thay đổi của bản này
+## Giới hạn
 
-- Tự chọn chế độ ký lại khi phát hiện `.so`, tránh lỗi do chọn nhầm chế độ tách gốc.
-- Đối chiếu tên và SHA-256 của mọi thư viện native trước khi công bố thành công. Nếu mất/thay đổi một thư viện thì từ chối xuất kết quả.
-- Lưu phần giải thích chế độ cùng kết quả để khi mở lại vẫn thấy APK đã ký lại giữ nguyên package.
-- Giữ các giới hạn về split/sharedUserId/định dạng chưa hỗ trợ; không bỏ kiểm tra chỉ để báo thành công.
+Chưa có APK Liên Quân của người dùng; ảnh chụp màn hình không cho phép kiểm tra 37 thư viện bên trong. Không xác nhận trò chơi đó tách được hoặc chạy được. Chưa thử điện thoại vật lý hay chạy thư viện ARM/ARM64. Mẫu x86_64 là fixture emulator, APK công cụ không chứa thư viện mẫu.
 
-## Giới hạn kết luận
+Native chỉ được tách khi không cần sửa định danh bên trong ELF. Công cụ kiểm tra cấu trúc ELF/ABI, quét định danh đã biết dạng rõ và giữ nguyên lớp JNI/byte thư viện; nếu phát hiện tham chiếu chưa xử lý thì báo thư viện và dừng, không tự chuyển sang ký lại. Kiểm tra tĩnh không phát hiện mọi định danh mã hóa/tạo động và không chứng minh ứng dụng chạy được. APK hợp lệ vẫn có thể không chạy do kiểm tra chữ ký, DRM, dịch vụ tài khoản hoặc logic của ứng dụng. Không vượt chống gian lận hay bảo đảm Google login.
 
-Chưa thử trên điện thoại vật lý hoặc chạy thư viện ARM/ARM64. Mẫu JNI x86_64 chỉ dành cho emulator; APK công cụ không giới hạn ABI khi ký lại vì chỉ giữ nguyên các thư viện đầu vào, không nạp chúng để chạy. Thử nghiệm không đảm bảo mọi APK/game hoạt động sau thay chữ ký: ứng dụng tự kiểm tra chữ ký hoặc đăng nhập Google có thể không hoạt động.
+Còn từ chối split/sharedUserId/mã nhúng/tài nguyên hoặc asset cần bộ xử lý riêng. Ký lại vẫn giữ package, không cài song song. Không gỡ app thật của người dùng để thử.
 
-Tách gốc native vẫn chưa được hỗ trợ. APK ký lại giữ package nên không cài cạnh bản gốc cùng package và không cập nhật được app đang dùng khóa khác.
+Emulator không có tăng tốc phần cứng từng hiện System UI ANR lúc khởi động; đã chờ System UI và tiếp tục. Không dùng lỗi môi trường đó để suy diễn thành kết quả của app. Kết luận JNI/dữ liệu ở trên dựa trên APK đã cài, mở lạnh và kiểm tra sau từng lần gỡ. Ảnh/log/XML có trong `verification/native-0.2.0/`. Báo cáo 0.1.0 và 0.1.1 được lưu riêng để đối chiếu, không thay thế kiểm thử bản này.
 
-Log và ảnh kiểm tra mới nằm trong `verification/native-0.1.1/`. Báo cáo các chức năng tách gốc APK Java/Kotlin, kho khóa và dữ liệu riêng của 0.1.0 được giữ trong `TEST-REPORT-0.1.0.md`; không suy diễn các kết quả đó thành hỗ trợ tách gốc native.
+APK công cụ SHA-256: `52ceed102ffcff7ccf4a3bf1645bb517d81a3a3ef1ae3b5d958cd43dc151d086`.

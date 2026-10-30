@@ -1,0 +1,13 @@
+APK Tách Gốc 0.2.0
+Chế độ: CLONE
+Package: vn.apktachgoc.nativesample.tachgoc
+SHA-256: 12b445de60a43e3bddc3d0c6856fe9b442ce0a25c06ff45be58b42ef3f9c3536
+Chứng chỉ: 2157660c631e77786091b977fc984f5eaf5f577b8c5a99cc4220cdd120c79004
+
+Tách gốc: package mới vn.apktachgoc.nativesample.tachgoc, cài riêng với vn.apktachgoc.nativesample; dữ liệu và UID do Android cấp riêng.
+Native: đã kiểm tra 1 tệp ELF; giữ nguyên tên lớp JNI và toàn bộ byte .so. Kiểm tra tĩnh chỉ phát hiện tham chiếu định danh dạng rõ, không chứng minh game chạy được.
+vn.apktachgoc.nativesample → vn.apktachgoc.nativesample.tachgoc
+Tên hiển thị → Mẫu Native .so • Bản riêng; giữ nguyên namespace lớp DEX; mở rộng tên lớp tương đối.
+Đã đối chiếu SHA-256: giữ nguyên nội dung 1 thư viện .so, căn chỉnh ZIP cho thư viện không nén ở biên 16 KB.
+
+Đã kiểm tra chữ ký v2, manifest và CRC. Chưa xác nhận ứng dụng này chạy được; hãy cài thử.

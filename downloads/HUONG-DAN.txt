@@ -1,19 +1,21 @@
-APK TÁCH GỐC 0.1.1 — BẢN CÀI THỬ
+APK TÁCH GỐC 0.2.0 — BẢN CÀI THỬ
 
-1. Tải APK-Tach-Goc-0.1.1-test.apk từ GitHub và cài trên Android 8.0 trở lên.
-2. Mở công cụ, chọn APK đơn đầy đủ.
-3. Nếu APK có .so, công cụ tự chọn Ký lại APK; bấm Ký lại APK có .so. Thư viện native được giữ nguyên, đối chiếu SHA-256.
-   Với APK không có native, vẫn có thể chọn Tạo bản tách gốc và nhập tên/package mới.
-4. Bấm nút ký tương ứng với chế độ đã chọn. Chỉ khi xác minh xong mới có APK kết quả.
-5. Lưu/chia sẻ APK hoặc mở trình cài đặt Android. Cho phép công cụ cài APK khi Android hỏi.
-6. Cài thử ứng dụng; đăng nhập lại trong bản sao nếu ứng dụng hỗ trợ.
-7. Xuất khóa .p12 có mật khẩu trước khi gỡ công cụ. Giữ cùng khóa và package để cập nhật bản sao.
+1. Cài cập nhật APK-Tach-Goc-0.2.0-test.apk lên công cụ cũ, không gỡ để giữ khóa ký.
+2. Chọn APK đơn đầy đủ từ điện thoại.
+3. Muốn máy nhận là APP KHÁC: chọn Tạo bản tách gốc — cài song song.
+   Nhập tên mới và package mới khác bản gốc. Ví dụ bản gốc com.garena.game.kgvn,
+   package bản sao có thể là com.garena.game.kgvn.tachgoc. Ví dụ này không xác nhận Liên Quân tương thích.
+4. Bấm Tạo và ký APK. Có .so thì công cụ kiểm tra ELF/định danh, giữ tên lớp JNI và byte thư viện.
+   Nếu gặp tham chiếu native chưa xử lý, công cụ dừng và nêu tệp, không tự đổi sang ký lại.
+5. Khi có kết quả PACKAGE MỚI, chọn Cài bản sao (package mới), hoặc lưu/chia sẻ APK.
+6. Cài thử và đăng nhập mới. Không sao chép dữ liệu/phiên đăng nhập bản gốc.
+7. Xuất khóa .p12 có mật khẩu trước khi gỡ công cụ. Giữ cùng khóa/package để cập nhật bản sao.
 
-Chưa tách gốc APK có .so, split APK, sharedUserId, mã nhúng hoặc trường hợp cần bộ xử lý riêng.
-Ký lại giữ package cũ, không tạo bản cài song song.
-Không cam kết đăng nhập Google, DRM, chống gian lận hoặc mọi game hoạt động sau ký lại.
-Bản sao đã cài có dữ liệu riêng và không phụ thuộc công cụ; các APK chưa lưu ra ngoài sẽ bị xóa khi gỡ công cụ.
-Xem TEST-REPORT.md để biết chính xác phần đã kiểm thử. Đây là bản debug phục vụ cài thử.
+CHỈ KÝ LẠI giữ nguyên package: Android vẫn nhận là app cũ và hiện Cập nhật.
+Đổi chữ ký không phải đổi định danh ứng dụng. Không dùng chế độ ký lại để cài song song.
 
-Cập nhật từ 0.1.0: cài đè APK công cụ mới để giữ khóa, không cần gỡ bản cũ.
-Ký lại .so vẫn giữ package; không tạo bản cài song song và không cập nhật đè app đang dùng khóa ký khác.
+Native được hỗ trợ khi không cần sửa định danh bên trong .so. Kiểm tra tĩnh có giới hạn,
+không đảm bảo game, đăng nhập Google, DRM hoặc chống gian lận chạy được. Chưa thử Liên Quân.
+Chưa nhận split APK, sharedUserId, mã nhúng hoặc các trường hợp cần bộ xử lý riêng.
+Bản sao đã cài độc lập với bản gốc và công cụ. Hãy lưu APK ra ngoài để giữ tệp khi gỡ công cụ.
+Xem TEST-REPORT.md để biết chính xác kết quả đã kiểm thử. Đây là APK debug, Android 8.0 trở lên.

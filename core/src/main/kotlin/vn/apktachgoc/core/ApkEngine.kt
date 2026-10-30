@@ -29,7 +29,7 @@ import java.util.zip.ZipFile
 
 data class ApkInfo(val packageName: String, val versionName: String, val versionCode: Int, val minSdk: Int, val nativeCode: Boolean)
 enum class Mode { RESIGN, CLONE }
-data class BuildReport(val file: File, val packageName: String, val sha256: String, val changes: List<String>, val certificateSha256: String)
+data class BuildReport(val file: File, val packageName: String, val sha256: String, val changes: List<String>, val certificateSha256: String, val mode: Mode = Mode.RESIGN)
 
 object ApkEngine {
     private const val ANDROID = "http://schemas.android.com/apk/res/android"
@@ -86,11 +86,11 @@ object ApkEngine {
         if (mode == Mode.CLONE) {
             require(validPackage(newPackage) && newPackage != info.packageName) { "Package mới phải khác bản gốc, gồm các đoạn chữ thường, số, dấu gạch dưới, phân cách bằng dấu chấm." }
             require(label.isNotBlank() && label.length <= 80) { "Tên bản sao cần từ 1 đến 80 ký tự." }
-            require(!info.nativeCode) { "Đang chọn Tạo bản tách gốc, nhưng APK có thư viện .so. Hãy chọn Ký lại APK để giữ nguyên thư viện native và package; APK ký lại không tạo bản cài song song." }
         }
         val target = if (mode == Mode.CLONE) newPackage else info.packageName
         val changes = mutableListOf<String>()
         if (mode == Mode.RESIGN) changes += "Ký lại APK: giữ nguyên package ${info.packageName}; không tạo bản cài song song."
+        else changes += "Tách gốc: package mới $target, cài riêng với ${info.packageName}; dữ liệu và UID do Android cấp riêng."
         val temp = File(output.parentFile, output.name + ".unsigned")
         val pending = File(output.parentFile, output.name + ".pending")
         output.parentFile?.mkdirs()
@@ -101,7 +101,7 @@ object ApkEngine {
                     val name = source.alias.uppercase()
                     name == "META-INF/MANIFEST.MF" || (name.startsWith("META-INF/") && (name.endsWith(".SF") || name.endsWith(".RSA") || name.endsWith(".DSA") || name.endsWith(".EC") || name.substringAfterLast('/').startsWith("SIG-")))
                 }.forEach { module.zipEntryMap.remove(it) }
-                if (mode == Mode.CLONE) rewrite(module, info.packageName, newPackage, label, changes, progress)
+                if (mode == Mode.CLONE) rewrite(module, input, info.packageName, newPackage, label, changes, progress)
                 progress(65, "Đóng gói và căn chỉnh ZIP")
                 module.createApkFileWriter(temp).apply {
                     zipAligner = ZipAligner().apply { setDefaultAlignment(4); setFileAlignment(java.util.function.Predicate { it.endsWith(".so", true) }, 16384) }
@@ -122,7 +122,7 @@ object ApkEngine {
                 zip.getInputStream(entry).use { stream -> val b = ByteArray(65536); while (true) { val n = stream.read(b); if (n < 0) break; crc.update(b, 0, n) } }
                 require(crc.value == entry.crc) { "CRC không khớp: ${entry.name}" }
             } }
-            if (mode == Mode.RESIGN && info.nativeCode) {
+            if (info.nativeCode) {
                 progress(94, "Đối chiếu SHA-256 từng thư viện native (.so)")
                 val nativeCount = verifyNativePreserved(input, pending)
                 changes += "Đã đối chiếu SHA-256: giữ nguyên nội dung $nativeCount thư viện .so, căn chỉnh ZIP cho thư viện không nén ở biên 16 KB."
@@ -131,7 +131,7 @@ object ApkEngine {
             require(!output.exists()) { "Tên đầu ra đã tồn tại; hãy tạo tên khác." }
             require(pending.renameTo(output)) { "Không thể hoàn tất tệp đầu ra." }
             progress(100, "Đã xác minh APK; cần cài thử để kiểm tra hành vi ứng dụng")
-            return BuildReport(output, target, sha256(output), changes, identity.fingerprint)
+            return BuildReport(output, target, sha256(output), changes, identity.fingerprint, mode)
         } finally { temp.delete(); pending.delete() }
     }
     private fun verifyNativePreserved(input: File, signed: File): Int = ZipFile(input).use { original ->
@@ -148,7 +148,7 @@ object ApkEngine {
             expected.size
         }
     }
-    private fun rewrite(module: ApkModule, old: String, new: String, label: String, changes: MutableList<String>, progress: (Int, String) -> Unit) {
+    private fun rewrite(module: ApkModule, input: File, old: String, new: String, label: String, changes: MutableList<String>, progress: (Int, String) -> Unit) {
         val manifest = module.androidManifest
         val root = manifest.manifestElement
         val all = elements(root)
@@ -216,9 +216,15 @@ object ApkEngine {
         manifest.refreshFull()
         val dexFiles = module.zipEntryMap.toList().filter { Regex("classes([0-9]+)?\\.dex").matches(it.alias) }
         require(dexFiles.isNotEmpty()) { "Không có DEX tiêu chuẩn; bản đầu chưa hỗ trợ APK này." }
+        val classNames = hashSetOf<String>()
         dexFiles.forEachIndexed { i, source ->
             progress(25 + i * 30 / dexFiles.size, "Xử lý DEX ${i + 1}/${dexFiles.size}")
             val dex = source.openStream().use { DexBackedDexFile.fromInputStream(Opcodes.getDefault(), it.buffered()) }
+            dex.classes.forEach { c ->
+                classNames += c.type
+                val binary = c.type.removePrefix("L").removeSuffix(";")
+                classNames += binary; classNames += binary.replace('/', '.')
+            }
             // Most library-only DEX files contain no app identifiers. Preserve their exact bytes.
             if (dex.stringReferences.none { rewriteValue(it.string, mapping) != it.string }) return@forEachIndexed
             val rewriter = DexRewriter(object : RewriterModule() {
@@ -247,6 +253,9 @@ object ApkEngine {
             require(verifiedDex.classes.size == dex.classes.size) { "Số lớp DEX thay đổi ngoài dự kiến." }
             module.zipEntryMap.add(ByteInputSource(bytes, source.alias))
         }
+        progress(58, "Kiểm tra ELF và định danh trong thư viện native")
+        val nativeCount = NativeAudit.check(input, mapping.keys, classNames)
+        if (nativeCount > 0) changes += "Native: đã kiểm tra $nativeCount tệp ELF; giữ nguyên tên lớp JNI và toàn bộ byte .so. Kiểm tra tĩnh chỉ phát hiện tham chiếu định danh dạng rõ, không chứng minh game chạy được."
         // Packed code and text assets with original identifiers need format-specific handling. Fail closed.
         module.zipEntryMap.toList().filter { it.alias.startsWith("assets/") || it.alias.startsWith("res/raw/") }.forEach { source ->
             val bytes = source.openStream().use { it.readBytes() }

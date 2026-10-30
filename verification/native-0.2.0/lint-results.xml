@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.9.1">
+
+    <issue
+        id="TrustAllX509TrustManager"
+        severity="Warning"
+        message="`checkServerTrusted` is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers"
+        category="Security"
+        priority="6"
+        summary="Insecure TLS/SSL trust manager"
+        explanation="This check looks for X509TrustManager implementations whose `checkServerTrusted` or `checkClientTrusted` methods do nothing (thus trusting any certificate chain) which could result in insecure network traffic caused by trusting arbitrary TLS/SSL certificates presented by peers."
+        url="https://goo.gle/TrustAllX509TrustManager"
+        urls="https://goo.gle/TrustAllX509TrustManager">
+        <location
+            file="/workspace/work/gradle-home/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15to18/1.78.1/5884ee847542641d04abfbfdeca3446d0300670b/bcpkix-jdk15to18-1.78.1.jar"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            try { startActivityForResult(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse(&quot;package:$packageName&quot;)), 104) }"
+        errorLine2="                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="263"
+            column="93"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="                    &quot;INSPECT&quot; -> inspect(Uri.parse(intent.getStringExtra(&quot;uri&quot;)))"
+        errorLine2="                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/ProcessingService.kt"
+            line="49"
+            column="42"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        getSharedPreferences(&quot;last&quot;, MODE_PRIVATE).edit().putString(&quot;path&quot;, output.path).putString(&quot;package&quot;, target).putString(&quot;hash&quot;, report.sha256).putString(&quot;cert&quot;, identity.fingerprint).putString(&quot;mode&quot;, mode.name).putString(&quot;changes&quot;, report.changes.joinToString(&quot;\n&quot;)).apply()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/ProcessingService.kt"
+            line="100"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            cloneRadio = RadioButton(this).apply { id = View.generateViewId(); text = &quot;Tạo bản tách gốc — cài song song&quot;; minHeight = dp(48); modes.addView(this); inputs += this }"
+        errorLine2="                                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="91"
+            column="88"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            signRadio = RadioButton(this).apply { id = View.generateViewId(); text = &quot;Chỉ ký lại — cùng package, không cài song song&quot;; minHeight = dp(48); modes.addView(this); inputs += this }"
+        errorLine2="                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="92"
+            column="87"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            inputs += button(c, &quot;Xem mã nhận diện khóa&quot;) { localWork(&quot;Đang mở khóa ký…&quot;) { val id = KeyVault.get(this); runOnUiThread { keyInfo.text = &quot;SHA-256 chứng chỉ:\n${id.fingerprint}&quot; } } }"
+        errorLine2="                                                                                                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="121"
+            column="152"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            inputs += button(c, &quot;Xem mã nhận diện khóa&quot;) { localWork(&quot;Đang mở khóa ký…&quot;) { val id = KeyVault.get(this); runOnUiThread { keyInfo.text = &quot;SHA-256 chứng chỉ:\n${id.fingerprint}&quot; } } }"
+        errorLine2="                                                                                                                                                        ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="121"
+            column="153"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            metadata.text = &quot;${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}&quot; + if (state.info.nativeCode) &quot;\nCó thư viện .so • tách gốc sẽ kiểm tra native trước khi xuất&quot; else &quot;&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="151"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            metadata.text = &quot;${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}&quot; + if (state.info.nativeCode) &quot;\nCó thư viện .so • tách gốc sẽ kiểm tra native trước khi xuất&quot; else &quot;&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="151"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            metadata.text = &quot;${state.name}\nPhiên bản ${state.info.versionName} (${state.info.versionCode})\n${state.info.packageName}&quot; + if (state.info.nativeCode) &quot;\nCó thư viện .so • tách gốc sẽ kiểm tra native trước khi xuất&quot; else &quot;&quot;"
+        errorLine2="                                            ~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="151"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                if (seenInput != null || label.text.isBlank()) label.setText(&quot;${state.name} • Bản riêng&quot;.take(80))"
+        errorLine2="                                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="153"
+            column="78"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                if (seenInput != null || label.text.isBlank()) label.setText(&quot;${state.name} • Bản riêng&quot;.take(80))"
+        errorLine2="                                                                                           ~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="153"
+            column="92"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                if (seenInput != null || packageNameField.text.isBlank()) packageNameField.setText(state.info.packageName.lowercase() + &quot;.tachgoc&quot;)"
+        errorLine2="                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="154"
+            column="100"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                if (seenInput != null || packageNameField.text.isBlank()) packageNameField.setText(state.info.packageName.lowercase() + &quot;.tachgoc&quot;)"
+        errorLine2="                                                                                                                                         ~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="154"
+            column="138"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        } else metadata.text = &quot;Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại.&quot;"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="157"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        } else metadata.text = &quot;Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại.&quot;"
+        errorLine2="                                ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="157"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        } else metadata.text = &quot;Chưa chọn APK hợp lệ\nChọn APK đơn đầy đủ từ điện thoại.&quot;"
+        errorLine2="                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="157"
+            column="55"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        if (!uiBusy) status.text = (if (state.busy) &quot;${state.percent}% • &quot; else &quot;&quot;) + state.status"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="158"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        if (currentReport == null) outputButtons.last().text = &quot;Cài APK kết quả&quot;"
+        errorLine2="                                                                ~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="163"
+            column="65"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            result.text = &quot;$kind\n${report.packageName}\n${&quot;%.1f&quot;.format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Chưa xác nhận ứng dụng đích chạy được.\n&quot; + report.changes.joinToString(&quot;\n&quot;)"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="167"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            result.text = &quot;$kind\n${report.packageName}\n${&quot;%.1f&quot;.format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Chưa xác nhận ứng dụng đích chạy được.\n&quot; + report.changes.joinToString(&quot;\n&quot;)"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="167"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            result.text = &quot;$kind\n${report.packageName}\n${&quot;%.1f&quot;.format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Chưa xác nhận ứng dụng đích chạy được.\n&quot; + report.changes.joinToString(&quot;\n&quot;)"
+        errorLine2="                                                            ~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="167"
+            column="61"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            result.text = &quot;$kind\n${report.packageName}\n${&quot;%.1f&quot;.format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Chưa xác nhận ứng dụng đích chạy được.\n&quot; + report.changes.joinToString(&quot;\n&quot;)"
+        errorLine2="                                                                                                           ~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="167"
+            column="108"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            result.text = &quot;$kind\n${report.packageName}\n${&quot;%.1f&quot;.format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Chưa xác nhận ứng dụng đích chạy được.\n&quot; + report.changes.joinToString(&quot;\n&quot;)"
+        errorLine2="                                                                                                                ~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="167"
+            column="113"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            result.text = &quot;$kind\n${report.packageName}\n${&quot;%.1f&quot;.format(report.file.length() / 1048576.0)} MB\nSHA-256: ${report.sha256}\n\nĐã kiểm tra chữ ký, manifest và CRC. Chưa xác nhận ứng dụng đích chạy được.\n&quot; + report.changes.joinToString(&quot;\n&quot;)"
+        errorLine2="                                                                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="167"
+            column="142"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                    try { val identity = SigningKeys.import(bytes, password); KeyVault.save(this, identity); runOnUiThread { keyInfo.text = &quot;Đã nhập khóa. SHA-256:\n${identity.fingerprint}&quot;; message(&quot;Đã nhập khóa&quot;, &quot;Khóa này sẽ dùng cho các lần ký tiếp theo. Bản sao cũ chỉ cập nhật được bằng đúng khóa đã dùng trước đó.&quot;) } }"
+        errorLine2="                                                                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="221"
+            column="141"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                    try { val identity = SigningKeys.import(bytes, password); KeyVault.save(this, identity); runOnUiThread { keyInfo.text = &quot;Đã nhập khóa. SHA-256:\n${identity.fingerprint}&quot;; message(&quot;Đã nhập khóa&quot;, &quot;Khóa này sẽ dùng cho các lần ký tiếp theo. Bản sao cũ chỉ cập nhật được bằng đúng khóa đã dùng trước đó.&quot;) } }"
+        errorLine2="                                                                                                                                             ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/workspace/work/apk-tach-goc/app/src/main/java/vn/apktachgoc/MainActivity.kt"
+            line="221"
+            column="142"/>
+    </issue>
+
+</issues>

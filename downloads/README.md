@@ -1,21 +1,23 @@
-# APK Tách Gốc 0.1.1
+# APK Tách Gốc 0.2.0
 
 Ứng dụng Android viết bằng Kotlin, giao diện tiếng Việt, chạy hoàn toàn trên điện thoại và không cần root. Đây là bản APK cài thử (debug). Không có quyền Internet và không gửi APK hoặc khóa ký lên máy chủ.
 
-## Ký lại APK có thư viện .so
+## Tạo ứng dụng khác để cài song song
 
-Bản 0.1.1 tự chọn **Ký lại APK (hỗ trợ .so)** khi nhận diện mã native. Bấm **Ký lại APK có .so** để tạo tệp đã ký mới. Công cụ giữ nguyên package, DEX và nội dung thư viện native; đối chiếu SHA-256 từng `.so` trước khi công bố kết quả. APK ký lại không phải bản tách gốc và không cài song song với bản gốc cùng package. Android không cho cập nhật đè một app đang cài bằng khóa ký khác.
+Bản 0.2.0 mặc định chọn **Tạo bản tách gốc — cài song song**, kể cả APK có `.so`. Nhập tên mới và package mới. Android dùng package để xác định ứng dụng; đổi chữ ký mà giữ package sẽ vẫn mở màn hình cập nhật bản gốc.
 
-Cài đè APK công cụ 0.1.1 để cập nhật từ 0.1.0; không cần gỡ công cụ cũ. Khóa ký lưu trên máy tiếp tục được sử dụng.
+Tách gốc native hỗ trợ thư viện không cần sửa định danh bên trong: giữ nguyên namespace lớp/JNI và mọi byte `.so`, đổi định danh Android trong manifest/tài nguyên/DEX. Kiểm tra ELF/ABI và quét các định danh đã biết dạng UTF-8, UTF-16LE/BE, gồm dạng package dùng dấu `/`. Chỉ miễn trừ tên lớp thật có trong DEX, vì đổi namespace lớp sẽ phá JNI. Nếu phát hiện định danh native còn cần sửa, công cụ từ chối và nêu tên thư viện; không tự chuyển sang ký lại. Kiểm tra tĩnh không chứng minh ứng dụng chạy được, không phát hiện được mọi chuỗi mã hóa hoặc định danh tạo lúc chạy. **Chưa kiểm thử Liên Quân**, vì chưa có APK gốc của người dùng.
+
+Cài đè APK công cụ 0.2.0 để cập nhật từ 0.1.x; không gỡ công cụ cũ để giữ khóa ký.
 
 ## Tải và cài
 
-Mở thư mục `downloads` trên GitHub, chọn `APK-Tach-Goc-0.1.1-test.apk` rồi bấm **Download raw file**. Nếu dùng trang GitHub trên điện thoại, có thể mở liên kết tải trực tiếp trong phần bàn giao.
+Mở thư mục `downloads` trên GitHub, chọn `APK-Tach-Goc-0.2.0-test.apk` rồi bấm **Download raw file**.
 
 1. Cài APK, cho phép trình duyệt/trình quản lý tệp cài ứng dụng từ nguồn này nếu Android hỏi.
 2. Mở **APK Tách Gốc → Chọn file APK**. Ứng dụng đọc tên, phiên bản và package từ bản sao nội bộ; không ghi vào tệp gốc.
-3. Chọn **Ký lại APK**, hoặc **Tạo bản tách gốc** và nhập tên/package riêng. Ví dụ `vn.ghi_chu.banrieng`. Package phải khác bản gốc, viết thường.
-4. Bấm **Tạo và ký APK**, đợi xác minh. Sau đó dùng **Lưu APK**, **Chia sẻ APK** hoặc **Mở trình cài đặt Android**. Android có thể yêu cầu quyền cho công cụ cài APK.
+3. Muốn cài cạnh bản gốc, chọn **Tạo bản tách gốc — cài song song** và nhập tên/package riêng. Ví dụ `vn.ghi_chu.banrieng`. Package phải khác bản gốc, viết thường. **Chỉ ký lại** không tạo ứng dụng khác.
+4. Bấm **Tạo và ký APK**, đợi xác minh. Sau đó dùng **Lưu APK**, **Chia sẻ APK** hoặc **Cài bản sao (package mới)**. Android có thể yêu cầu quyền cho công cụ cài APK. Kết quả và nút cài ghi rõ loại đầu ra, kể cả sau mở lại công cụ.
 5. Cài và kiểm tra ứng dụng. Phiên đăng nhập trong bản sao bắt đầu mới. Không sao chép dữ liệu hoặc token đăng nhập của bản gốc.
 
 **Ký lại APK** giữ nguyên package nên không cài cạnh bản gốc và thường không cập nhật được bản gốc có chữ ký khác. **Tách gốc** tạo package riêng, có UID/vùng dữ liệu riêng, được Android cài độc lập. Bản sao đã cài không phụ thuộc vòng đời của bản gốc hoặc công cụ.
@@ -35,7 +37,7 @@ Gỡ công cụ xóa khóa lưu nội bộ và các APK chưa xuất. Ứng dụ
 - Tạo bảng ánh xạ cho package, provider authorities (kể cả authority không bắt đầu bằng package), quyền do app khai báo, account type trong XML authenticator/sync adapter, task affinity, process toàn cục, action/category/scheme thuộc package cũ. Sửa các giá trị định danh khớp toàn bộ và authority có ranh giới trong URI `content://`; sửa hằng chuỗi trong DEX, static values/annotations và tài nguyên. DEX thư viện không chứa giá trị cần đổi được giữ nguyên từng byte. Không thay thế chuỗi con hàng loạt trong mã hoặc dữ liệu.
 - Xóa chữ ký cũ, đóng gói/căn chỉnh ZIP, ký v1/v2/v3 bằng apksig, rồi xác minh chữ ký v2, chứng chỉ, manifest, phiên bản, CRC và SHA-256 đầu vào. Kết quả chỉ được đổi tên thành APK cuối sau khi qua kiểm tra. Tệp lỗi không được công bố là thành công.
 - Từ chối split/config APK, base có dấu hiệu cần split, APKS/XAPK/AAB, sharedUserId, overlay/instrumentation/thư viện chia sẻ, nhiều package tài nguyên, tên lớp/định danh manifest qua tham chiếu tài nguyên chưa hỗ trợ.
-- **Chưa tách gốc APK chứa `.so`**, mã nhúng hoặc asset/raw có định danh gốc cần bộ xử lý riêng. Chế độ ký lại hỗ trợ giữ mã native và căn chỉnh thư viện không nén 16 KB; không sửa ELF hay đảm bảo thư viện tương thích mọi thiết bị 16 KB.
+- Tách gốc `.so` thông thường khi kiểm tra ELF và tham chiếu định danh qua. Từ chối native cần sửa định danh, mã nhúng hoặc asset/raw có định danh gốc cần bộ xử lý riêng. Cả hai chế độ đều giữ byte native, đối chiếu SHA-256 và căn chỉnh thư viện không nén 16 KB; không sửa ELF hay đảm bảo tương thích mọi thiết bị 16 KB.
 - Không thể phát hiện mọi phụ thuộc split bị nhà đóng gói xóa dấu hiệu; không đảm bảo xử lý được định danh tự sinh/ghép động, mã được mã hóa, framework đóng gói, phản xạ và đường dẫn hardcode. Nếu trường hợp chưa hỗ trợ được phát hiện thì trả lỗi cụ thể. APK hợp lệ về cấu trúc vẫn có thể không chạy do logic ứng dụng.
 - Đăng nhập Google, app links, thông báo đẩy, DRM, dịch vụ ngoài app và kiểm tra chữ ký có thể không hoạt động sau ký lại. Không cam kết tương thích mọi game, không vượt chống gian lận.
 
@@ -49,7 +51,7 @@ Yêu cầu JDK 21, Android SDK Platform 35 / Build Tools 35.0.0; có Android SDK
 
 APK công cụ: `app/build/outputs/apk/debug/app-debug.apk`.
 
-`core:test` build app mẫu, tạo APK tách gốc thật, kiểm tra provider/quyền/task affinity/tên lớp/tài nguyên/DEX, chữ ký, ký lại, cùng khóa ký, vòng xuất/nhập khóa, mật khẩu sai và các trường hợp bị từ chối. Có thêm APK mẫu dùng thư viện ELF/JNI thật để kiểm tra giữ nguyên mọi DEX và `.so` sau ký lại, kể cả APK không khai báo tài nguyên riêng. APK mẫu đầu ra nằm ở `core/build/test-artifacts/`.
+`core:test` build app mẫu, tạo APK tách gốc thật, kiểm tra provider/quyền/task affinity/tên lớp/tài nguyên/DEX, chữ ký, ký lại, cùng khóa ký, vòng xuất/nhập khóa, mật khẩu sai và các trường hợp bị từ chối. Có APK mẫu dùng ELF/JNI thật để thử tách gốc/ký lại, giữ byte `.so` và namespace lớp JNI; thử từ chối định danh native ở UTF-8/UTF-16 qua ranh giới bộ đệm quét, kể cả APK không khai báo tài nguyên riêng. APK mẫu đầu ra nằm ở `core/build/test-artifacts/`.
 
 Để chạy phần kiểm tra xử lý **ngay trong Android** trên thiết bị/emulator đã kết nối:
 
@@ -65,15 +67,15 @@ Kết quả kiểm thử của bản bàn giao nằm trong `TEST-REPORT.md`, kè
 
 ## Kiểm thử native
 
-`native-sample/` chứa app mẫu x86_64 có thư viện ELF/JNI thật. Hàm C trả về 73, và giao diện chỉ hiển thị kết quả khi `System.loadLibrary` cùng lời gọi JNI thành công. Thư viện thử đã được biên dịch sẵn và có mã C cùng script `scripts/build-native-fixture.sh` để tái tạo bằng GCC trên Linux x86_64/JDK. Đây là fixture cho emulator x86_64, không phải APK mẫu cho điện thoại ARM; APK công cụ vẫn không giới hạn ABI đầu vào khi ký lại.
+`native-sample/` chứa app mẫu x86_64 có ELF/JNI thật. Hàm C gọi JNI `FindClass` với namespace lớp gốc rồi trả về 73; giao diện chỉ hiển thị kết quả khi nạp và gọi thư viện thành công. Mẫu có SharedPreferences và receiver thử nghiệm để kiểm tra dữ liệu riêng. Có mã C và `scripts/build-native-fixture.sh` để tái tạo bằng GCC trên Linux x86_64/JDK. Đây là fixture cho emulator x86_64, không phải mẫu cho điện thoại ARM; APK công cụ không chứa hoặc nạp thư viện thử này.
 
-Chạy `OnDeviceTest#resignRealNativeApkOnAndroid` để tạo APK ký lại ngay trên Android. Sau đó chạy `scripts/native-smoke.sh` trên emulator để thử nạp JNI trước/sau ký, đồng thời kiểm tra Android từ chối cập nhật app có chữ ký khác. Không dùng script này với dữ liệu thật.
+Chạy `OnDeviceTest#cloneRealNativeApkOnAndroid` để tách gốc ngay trong Android. `scripts/native-clone-smoke.sh` cài bản gốc và bản sao cùng lúc, mở JNI, kiểm tra UID/phiên riêng, gỡ bản gốc rồi công cụ và mở lạnh bản sao. Script chỉ cho chạy trên emulator và sẽ xóa khóa của công cụ thử nghiệm. `resignRealNativeApkOnAndroid` cùng `scripts/native-smoke.sh` vẫn kiểm tra ký lại. Không dùng script gỡ app với dữ liệu thật.
 
 ## Cấu trúc
 
 - `app/`: giao diện tiếng Việt, foreground service, thông báo tiến trình, SAF, chia sẻ/cài APK, kho khóa Android Keystore.
 - `core/`: xử lý ZIP/manifest/tài nguyên/DEX, ký/xác minh và định dạng khóa; dùng lại cùng mã trên JVM và Android.
-- `native-sample/`: app mẫu có `.so` thật, phục vụ kiểm thử ký lại.
+- `native-sample/`: app mẫu có `.so` thật, phục vụ kiểm thử tách gốc, ký lại và dữ liệu riêng.
 - `sample/`: app mẫu có phiên đăng nhập mô phỏng, provider, quyền riêng và receiver phục vụ thử nghiệm. Receiver chỉ thuộc app mẫu, không có trong công cụ.
 - `scripts/`: kiểm thử cài đặt Android.
 

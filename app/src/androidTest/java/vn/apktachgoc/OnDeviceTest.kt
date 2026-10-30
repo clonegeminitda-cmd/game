@@ -11,6 +11,24 @@ import java.util.zip.ZipFile
 
 @RunWith(AndroidJUnit4::class)
 class OnDeviceTest {
+    @Test fun cloneRealNativeApkOnAndroid() {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val context = instrumentation.targetContext
+        val folder = File(context.getExternalFilesDir(null), "device-native-clone-test").apply { mkdirs() }
+        val input = File(folder, "native-original.apk")
+        instrumentation.context.assets.open("native-sample-debug.apk").use { source -> input.outputStream().use { source.copyTo(it) } }
+        val hash = ApkEngine.sha256(input)
+        val output = File(folder, "native-clone.apk").apply { delete() }
+        val report = ApkEngine.build(input, output, Mode.CLONE, "vn.apktachgoc.nativesample.tachgoc", "Native • Bản riêng", KeyVault.get(context))
+        assertEquals("vn.apktachgoc.nativesample.tachgoc", ApkEngine.inspect(output).packageName)
+        assertEquals(Mode.CLONE, report.mode)
+        assertEquals(hash, ApkEngine.sha256(input))
+        ZipFile(input).use { original -> ZipFile(output).use { clone ->
+            val name = "lib/x86_64/libnativefixture.so"
+            assertArrayEquals(original.getInputStream(original.getEntry(name)).readBytes(), clone.getInputStream(clone.getEntry(name)).readBytes())
+        } }
+        File(folder, "result.txt").writeText("PASS: tạo bản tách gốc native trên Android, package mới; giữ byte .so và APK gốc.\nInput SHA256=$hash\nOutput SHA256=${report.sha256}\nCertificate=${report.certificateSha256}\n${report.changes.joinToString("\n")}\n")
+    }
     @Test fun resignRealNativeApkOnAndroid() {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val context = instrumentation.targetContext

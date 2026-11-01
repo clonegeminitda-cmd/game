@@ -27,12 +27,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: EmailCheckExcel-Windows-x64
-          path: |
-            email-check-excel/EmailCheckExcel-Windows-x64.zip
-            email-check-excel/release/EmailCheckExcel.exe
-            email-check-excel/release/HUONG-DAN.md
-            email-check-excel/release/KIEM-THU-WINDOWS.json
-            email-check-excel/release/SHA256.txt
+          path: email-check-excel/release/
           retention-days: 30
       - name: Upload test evidence
         if: always()

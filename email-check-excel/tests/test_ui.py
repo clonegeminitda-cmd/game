@@ -7,6 +7,18 @@ from tests.test_core import FakeDNS
 from tools.make_sample import generate
 
 
+def test_vietnamese_standard_controls_keep_unknown_labels(qapp):
+    from PySide6.QtCore import QCoreApplication
+    from emailcheck.language import Vietnamese
+    translator=Vietnamese(qapp)
+    qapp.installTranslator(translator)
+    try:
+        assert QCoreApplication.translate('QDialogButtonBox','Cancel')=='Hủy'
+        assert QCoreApplication.translate('UntranslatedContext','Visible label')=='Visible label'
+    finally:
+        qapp.removeTranslator(translator)
+
+
 def test_gui_import_check_restore_preview_no_recipients_selected(qtbot,store,tmp_path,monkeypatch):
     generate(tmp_path)
     window = MainWindow(store)

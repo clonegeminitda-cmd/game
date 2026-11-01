@@ -29,7 +29,8 @@ TEXT = {
 
 class Vietnamese(QTranslator):
     def translate(self, context, sourceText, disambiguation=None, n=-1):
-        return TEXT.get(sourceText, '')
+        # None means no translation; an empty string hides the original label.
+        return TEXT.get(sourceText)
 
 
 def install(app):

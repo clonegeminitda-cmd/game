@@ -12,7 +12,7 @@ if (-not $SkipTests) {
     Check-Exit 'Tests'
     Remove-Item Env:QT_QPA_PLATFORM -ErrorAction SilentlyContinue
 }
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name EmailCheckExcel --collect-data googleapiclient --exclude-module PySide6.QtWebEngineCore --exclude-module PySide6.QtWebEngineWidgets --exclude-module PySide6.QtQml --exclude-module PySide6.QtQuick --exclude-module tkinter main.py
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name EmailCheckExcel --add-data 'emailcheck/data;emailcheck/data' --collect-data googleapiclient --exclude-module PySide6.QtWebEngineCore --exclude-module PySide6.QtWebEngineWidgets --exclude-module PySide6.QtQml --exclude-module PySide6.QtQuick --exclude-module tkinter main.py
 Check-Exit 'Windows executable build'
 New-Item -ItemType Directory -Force -Path work | Out-Null
 $smoke = Join-Path (Get-Location) 'work\exe-smoke'
@@ -33,6 +33,8 @@ python tools/make_sample.py release/sample
 Check-Exit 'Sample generation'
 python tools/collect_licenses.py release/LICENSES
 Check-Exit 'Collect third-party notices'
+Copy-Item 'emailcheck\data\disposable-LICENSE.txt' 'release\LICENSES\disposable-domains-CC0.txt' -Force
+Copy-Item 'emailcheck\data\sources.json' 'release\DISPOSABLE-SOURCES.json' -Force
 Get-FileHash release\EmailCheckExcel.exe -Algorithm SHA256 | Format-List | Out-File release\SHA256.txt
 Compress-Archive -Path release\* -DestinationPath EmailCheckExcel-Windows-x64.zip -Force
 Write-Output 'Windows x64 build and executable smoke test completed.'

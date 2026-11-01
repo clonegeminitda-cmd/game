@@ -1,6 +1,26 @@
-# Email Check Excel 1.0.0
+# Email Check Excel 1.1.0 — bộ lọc miễn phí
 
 Ứng dụng Windows 10/11 x64 kiểm tra danh sách Excel/CSV, gửi thử có xác nhận qua Gmail và xuất kết quả trung thực.
+
+## Bản cập nhật miễn phí 1.1.0
+
+Không tích hợp API tính phí, không cần tài khoản ZeroBounce hoặc API key và không tiêu tín dụng xác minh. Giữ nguyên chức năng Gmail tùy chọn đã có; bộ lọc miễn phí không cần Gmail.
+
+Sau khi chọn tệp/sheet/cột email, bấm **Kiểm tra và lọc miễn phí**. Kết quả phân thành ba nhóm, hiển thị ngay ở cột đầu tiên và bộ đếm:
+
+- **Nên loại khỏi danh sách:** sai cú pháp, trùng lặp (giữ dòng đầu), NXDOMAIN, Null MX, không có tuyến MX/A/AAAA; hoặc đã có DSN tương ứng báo hộp thư không tồn tại. Đây là gợi ý sàng lọc; không xóa hay sửa nguồn.
+- **Cần xem lại:** tên miền có trong danh sách email tạm thời; địa chỉ chức năng như `sales@`/`support@`; tên miền nghi gõ sai; DNS lỗi tạm thời hoặc chưa kiểm tra xong. Địa chỉ chức năng không đồng nghĩa spam. Danh sách cộng đồng có thể thiếu hoặc lỗi thời nên nhãn tạm thời là dấu hiệu cần xem lại, không phải kết luận hộp thư chết.
+- **Qua bước lọc cơ bản — chưa xác minh hộp thư:** đúng cú pháp, có tuyến nhận thư, không trùng và chưa thấy dấu hiệu rủi ro trong bộ lọc này. KHÔNG có nghĩa hộp thư tồn tại, không phải spamtrap hoặc an toàn tuyệt đối để gửi. Cột trạng thái hộp thư vẫn riêng biệt và mặc định Chưa xác định.
+
+Chữ “Hợp lệ” cũ ở cột cú pháp được thay bằng **Đúng cú pháp**. Ví dụ một địa chỉ gõ ngẫu nhiên tại gmail.com vẫn có thể qua bước lọc cơ bản nhưng không được ghi thành hộp thư tồn tại. Không tự quét SMTP hoặc dò tài khoản Google để suy diễn.
+
+Tên miền như `gmial.com` được gợi ý `gmail.com` ở cột riêng, KHÔNG tự sửa địa chỉ hoặc gửi tới gợi ý. Muốn sửa, người dùng tự kiểm tra và chỉnh tệp nguồn rồi nhập lại.
+
+Danh sách email tạm thời đóng gói từ [disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains), bản chụp 2026-11-01, commit `271d27d2fb83fc4c809dfd6cb512a6b910719619`, giấy phép CC0. Thông tin nguồn và checksum có trong DISPOSABLE-SOURCES.json. App không tự tải danh sách hay gửi danh sách email của bạn tới dịch vụ xác minh; DNS vẫn cần mạng. Bản cập nhật app sẽ có bản chụp danh sách mới hơn. Chưa có dữ liệu spamtrap/abuse chuyên dụng hoặc khả năng xác minh chắc chắn hộp thư Gmail/Outlook. Lọc miễn phí không thay thế đầy đủ dịch vụ như ZeroBounce.
+
+Dùng ô **Hiển thị** để xem từng nhóm. Xuất XLSX tạo đủ 6 sheet: Tổng hợp, Kết quả đầy đủ, Chưa xác định, Nên loại, Cần xem lại, Qua lọc cơ bản. Sheet đầy đủ luôn giữ mọi dòng/cột nguồn; màu xanh nhạt chỉ là qua bước lọc cơ bản. Không ghi đè tệp nguồn.
+
+Có thể thay EXE 1.0 bằng EXE 1.1 và mở bình thường. Phiên SQLite, cấu hình OAuth và token Gmail trong thư mục người dùng được giữ lại; ứng dụng chỉ bổ sung cột kết quả mới. Khôi phục phiên cũ để xem phân loại, hoặc bấm kiểm tra để tiếp tục những dòng còn dang dở. Hàng đợi cũ không tự gửi khi khởi động.
 
 ## Mở ứng dụng
 
@@ -9,9 +29,9 @@ Nhấp đúp **EmailCheckExcel.exe**. Không cần cài Python, Excel, công c�
 ## Kiểm tra Excel ngay, không cần Gmail
 
 1. Chọn `.xlsx` hoặc `.csv`, chọn sheet và cột email. Dòng 1 là tiêu đề; xem trước 50 dòng.
-2. Bấm **Kiểm tra**. Cú pháp và DNS được kiểm tra trên luồng nền, tối đa 8 tên miền đồng thời. Có tiến trình, số dòng, thời gian và hủy. DNS dùng cấu hình mạng của Windows; mạng chặn DNS sẽ cho kết quả lỗi tạm thời, không suy diễn hộp thư không tồn tại.
+2. Bấm **Kiểm tra và lọc miễn phí**. Cú pháp và DNS được kiểm tra trên luồng nền, tối đa 8 tên miền đồng thời. Có tiến trình, số dòng, thời gian và hủy. DNS dùng cấu hình mạng của Windows; mạng chặn DNS sẽ cho kết quả lỗi tạm thời, không suy diễn hộp thư không tồn tại.
 3. Mỗi trang kết quả chứa tối đa 1.000 dòng; dùng bộ lọc và chọn trang. Giới hạn nhập 100.000 dòng/1.000 cột; tệp lớn hơn bị từ chối, không bị cắt âm thầm. Có thể tiếp tục phiên đã hủy và khôi phục phiên đã lưu.
-4. **Không gửi — xuất kết quả** lưu Excel mới bất cứ lúc nào sau khi bắt đầu kiểm tra, gồm tổng hợp, đầy đủ và chưa xác định. Không ghi đè nguồn. Dữ liệu đang kiểm tra được chụp tại lúc xuất; các dòng chưa xong giữ trạng thái chưa kiểm tra.
+4. **Không gửi — xuất kết quả** lưu Excel mới bất cứ lúc nào sau khi bắt đầu kiểm tra, gồm tổng hợp, đầy đủ, chưa xác định, nên loại, cần xem lại và qua lọc cơ bản. Không ghi đè nguồn. Dữ liệu đang kiểm tra được chụp tại lúc xuất; các dòng chưa xong giữ trạng thái chưa kiểm tra.
 
 Giữ cột, thứ tự dòng và giá trị ô của sheet đã chọn; bổ sung các cột kết quả. Không sao chép định dạng, macro, công thức thực thi hay các sheet nguồn khác. Công thức nguồn được xuất thành văn bản an toàn, không được thực thi. Chuỗi bắt đầu bằng `=`, `+`, `-`, `@` được lưu rõ là kiểu văn bản OOXML. Ký tự điều khiển không hợp lệ trong XML bị loại khi xuất; dữ liệu gốc vẫn lưu trong SQLite. CSV đọc UTF-8/BOM hoặc dự phòng Windows-1258; không xuất CSV, chỉ xuất XLSX an toàn.
 

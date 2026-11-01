@@ -26,6 +26,7 @@ import httplib2
 
 from .core import normalize
 from .store import ABSENT, CONFIRMED, UNKNOWN, data_dir, now
+from .freefilters import SYNTAX_OK
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.readonly']
 
@@ -156,7 +157,7 @@ def enqueue(store, drafts, consent):
     with store.connect() as c:
         for job in drafts:
             row = c.execute('SELECT * FROM rows WHERE id=?', (job['row_id'],)).fetchone()
-            if not row or row['syntax'] != 'Hợp lệ' or row['domain'] not in ('Có MX', 'Có A/AAAA thay MX') or row['duplicate'] != 'Không trùng' or row['mailbox'] != UNKNOWN:
+            if not row or row['syntax'] != SYNTAX_OK or row['domain'] not in ('Có MX', 'Có A/AAAA thay MX') or row['duplicate'] != 'Không trùng' or row['mailbox'] != UNKNOWN:
                 raise ValueError('Chỉ gửi dòng đã kiểm tra, không trùng, có tuyến nhận thư và hộp thư chưa xác định.')
             if row['normalized'] != job['recipient'] or row['dedup_key'] != job['dedup_key']:
                 raise ValueError('Dữ liệu người nhận đã thay đổi. Hãy xem trước lại.')

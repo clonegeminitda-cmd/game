@@ -13,6 +13,8 @@ from openpyxl.styles import PatternFill, Font
 from openpyxl.utils import get_column_letter
 
 from .store import UNKNOWN, ABSENT, CONFIRMED, now
+from .freefilters import SYNTAX_OK, PASS, REVIEW, REMOVE, screen_session, screening, export_groups, list_info
+from . import __version__
 
 
 def sheet_names(path):
@@ -168,7 +170,7 @@ def check_session(store, sid, cancel, progress=lambda a, b: None, checker=None):
                 address, key, domain = normalize(source[col])
                 duplicate = f"Trùng dòng {seen[key]}" if key in seen else 'Không trùng'
                 seen.setdefault(key, row['row_no'])
-                updates.append((row['id'], dict(normalized=address, dedup_key=key, syntax='Hợp lệ', duplicate=duplicate)))
+                updates.append((row['id'], dict(normalized=address, dedup_key=key, syntax=SYNTAX_OK, duplicate=duplicate)))
                 if not row['checked']:
                     pending.setdefault(domain, []).append(row['id'])
             except ValueError as exc:
@@ -201,6 +203,7 @@ def check_session(store, sid, cancel, progress=lambda a, b: None, checker=None):
                         store.update_rows([(rid, dict(domain=status, reason=reason, error=code, checked=stamp)) for rid in batch])
                         done += len(batch)
                         progress(done, len(rows))
+        screen_session(store, sid)
         store.state(sid, 'cancelled' if cancel.is_set() else 'done')
         return not cancel.is_set()
     except BaseException:
@@ -208,8 +211,8 @@ def check_session(store, sid, cancel, progress=lambda a, b: None, checker=None):
         raise
 
 
-RESULT_COLUMNS = ['Email chuẩn hóa','Cú pháp','Tên miền','Trùng lặp','Trạng thái hộp thư','Trạng thái gửi','Lý do','Mã lỗi','Thời điểm kiểm tra (UTC)']
-RESULT_KEYS = ['normalized','syntax','domain','duplicate','mailbox','send_state','reason','error','checked']
+RESULT_COLUMNS = ['Email chuẩn hóa','Cú pháp (chỉ định dạng)','Tên miền','Trùng lặp','Sàng lọc miễn phí','Dấu hiệu / lý do sàng lọc','Gợi ý tên miền (không tự sửa)','Trạng thái hộp thư','Trạng thái gửi','Lý do kiểm tra','Mã lỗi','Thời điểm kiểm tra (UTC)','Thời điểm sàng lọc (UTC)']
+RESULT_KEYS = ['normalized','syntax','domain','duplicate','screening','risk','suggestion','mailbox','send_state','reason','error','checked','screened']
 
 
 def text_cell(ws, row, col, value):
@@ -231,18 +234,25 @@ def export_xlsx(store, sid, path):
     if path == Path(session['source']).resolve():
         raise ValueError('Không được ghi đè tệp nguồn. Hãy chọn tên tệp mới.')
     rows = store.rows(sid)
+    # Derive screening from the same export snapshot, including partial results.
+    rows = [{**r, **screening(r)} for r in rows]
     wb = Workbook()
     summary = wb.active
     summary.title = 'Tổng hợp'
     facts = [
-        ('Email Check Excel', '1.0.0'), ('Nguồn', session['source']), ('Sheet nguồn', session['sheet']),
+        ('Email Check Excel', __version__), ('Nguồn', session['source']), ('Sheet nguồn', session['sheet']),
         ('Thời điểm xuất (UTC)', now()), ('Tổng số dòng', len(rows)),
         ('Đã kiểm tra', sum(bool(r['checked']) for r in rows)),
-        ('Cú pháp hợp lệ', sum(r['syntax'] == 'Hợp lệ' for r in rows)),
+        ('Chỉ đúng cú pháp', sum(r['syntax'] == SYNTAX_OK for r in rows)),
         ('Dòng trùng', sum(r['duplicate'].startswith('Trùng') for r in rows)),
         ('Chưa xác định', sum(r['mailbox'] == UNKNOWN for r in rows)),
         ('Máy chủ báo không tồn tại', sum(r['mailbox'] == ABSENT for r in rows)),
         ('Phản hồi xác nhận tương ứng', sum(r['mailbox'] == CONFIRMED for r in rows)),
+        ('Nên loại khỏi danh sách', sum(r['screening'] == REMOVE for r in rows)),
+        ('Cần xem lại', sum(r['screening'] == REVIEW for r in rows)),
+        ('Qua bước lọc cơ bản', sum(r['screening'] == PASS for r in rows)),
+        ('Nguồn danh sách email tạm thời', list_info()),
+        ('Giới hạn lọc miễn phí', 'Không xác minh chắc chắn hộp thư Gmail/Outlook, không có cơ sở dữ liệu spamtrap/abuse; địa chỉ chức năng không đồng nghĩa spam.'),
         ('Lưu ý', 'Cú pháp, DNS, gửi thành công hoặc không có thư báo lỗi không chứng minh hộp thư tồn tại.'),
         ('Bảo toàn', 'Giữ giá trị, cột và thứ tự dòng của sheet đã chọn; không sao chép định dạng, macro, công thức thực thi hay các sheet nguồn khác.')]
     for i, pair in enumerate(facts, 1):
@@ -250,7 +260,7 @@ def export_xlsx(store, sid, path):
             text_cell(summary, i, j, value)
     summary.column_dimensions['A'].width = 37
     summary.column_dimensions['B'].width = 100
-    for name, group in [('Kết quả đầy đủ', rows), ('Chưa xác định', [r for r in rows if r['mailbox'] == UNKNOWN])]:
+    for name, group in [('Kết quả đầy đủ', rows), ('Chưa xác định', [r for r in rows if r['mailbox'] == UNKNOWN])] + export_groups(rows):
         ws = wb.create_sheet(name)
         headers = session['headers'] + RESULT_COLUMNS
         for j, value in enumerate(headers, 1):
@@ -259,7 +269,7 @@ def export_xlsx(store, sid, path):
             cell.fill = PatternFill('solid', fgColor='173B58')
         for i, row in enumerate(group, 2):
             values = json.loads(row['source']) + [row[k] for k in RESULT_KEYS]
-            color = 'FEE2E2' if row['mailbox'] == ABSENT or row['syntax'] == 'Không hợp lệ' else 'DCFCE7' if row['mailbox'] == CONFIRMED else 'FFF4D6'
+            color = 'FEE2E2' if row['screening'] == REMOVE else 'DCFCE7' if row['mailbox'] == CONFIRMED else 'E5EFFB' if row['screening'] == PASS else 'FFF4D6'
             for j, value in enumerate(values, 1):
                 cell = text_cell(ws, i, j, value)
                 if j > len(session['headers']):

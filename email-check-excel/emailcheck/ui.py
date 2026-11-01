@@ -16,6 +16,8 @@ from PySide6.QtWidgets import (
 from .core import sheet_names, read_table, check_session, export_xlsx, RESULT_COLUMNS, RESULT_KEYS
 from .store import Store, UNKNOWN, ABSENT, CONFIRMED, data_dir
 from .gmail import Gmail, Outbox, draft, enqueue, monitor, reconcile_sent
+from .freefilters import PASS, REVIEW, REMOVE, SYNTAX_OK, screening, list_info
+from . import __version__
 
 
 class Worker(QThread):
@@ -65,7 +67,7 @@ class Table(QAbstractTableModel):
             return '' if value is None else str(value)
         if role == Qt.BackgroundRole and self.states:
             state = self.states[index.row()]
-            return QColor('#ffe7e7' if state == ABSENT else '#def5e6' if state == CONFIRMED else '#fff7df')
+            return QColor('#ffe7e7' if state in (ABSENT, REMOVE) else '#def5e6' if state == CONFIRMED else '#e5effb' if state == PASS else '#fff7df')
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if role == Qt.DisplayRole:
@@ -94,8 +96,10 @@ class SendDialog(QDialog):
         self.list = QListWidget()
         existing = {j['dedup_key'] for j in store.jobs()}
         for row in rows:
-            if row['syntax'] == 'Hợp lệ' and row['domain'] in ('Có MX','Có A/AAAA thay MX') and row['duplicate'] == 'Không trùng' and row['mailbox'] == UNKNOWN and row['dedup_key'] not in existing and row['normalized'].isascii():
-                item = QListWidgetItem(f"Dòng {row['row_no']} · {row['normalized']}")
+            row = {**row, **screening(row)}
+            if row['syntax'] == SYNTAX_OK and row['domain'] in ('Có MX','Có A/AAAA thay MX') and row['duplicate'] == 'Không trùng' and row['mailbox'] == UNKNOWN and row['dedup_key'] not in existing and row['normalized'].isascii():
+                item = QListWidgetItem(f"Dòng {row['row_no']} · {row['normalized']} · {row['screening']}")
+                item.setToolTip(row['risk'])
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 item.setCheckState(Qt.Unchecked)
                 item.setData(Qt.UserRole, row)
@@ -192,13 +196,14 @@ class MainWindow(QMainWindow):
         title = QLabel('Email Check Excel')
         title.setObjectName('title')
         layout.addWidget(title)
-        tagline = QLabel('Kiểm tra danh sách email · Giữ nguyên dữ liệu · Gửi thử khi bạn chủ động chọn')
+        tagline = QLabel(f'Phiên bản {__version__} · Lọc miễn phí · Không cần API key hay tín dụng · Chưa xác minh chắc chắn hộp thư')
         layout.addWidget(tagline)
         self.tabs = QTabWidget()
         layout.addWidget(self.tabs, 1)
         self.build_data_tab()
         self.build_gmail_tab()
         self.build_queue_tab()
+        self.build_free_help_tab()
         footer = QHBoxLayout()
         self.status = QLabel('Sẵn sàng. Chọn tệp Excel hoặc CSV để bắt đầu.')
         self.status.setWordWrap(True)
@@ -265,7 +270,7 @@ class MainWindow(QMainWindow):
         self.column = QComboBox()
         self.column.currentIndexChanged.connect(self.reset_selection)
         row.addWidget(self.column, 1)
-        self.check_btn = button('2. Kiểm tra', self.start_check, row)
+        self.check_btn = button('2. Kiểm tra và lọc miễn phí', self.start_check, row)
         self.check_btn.setObjectName('primary')
         self.check_btn.setEnabled(False)
         layout.addLayout(row)
@@ -281,7 +286,7 @@ class MainWindow(QMainWindow):
         row = QHBoxLayout()
         row.addWidget(QLabel('Hiển thị:'))
         self.filter = QComboBox()
-        self.filter.addItems(['Tất cả', 'Chưa xác định', 'Cú pháp không hợp lệ', 'Trùng lặp', 'Máy chủ báo không tồn tại', 'Đã có phản hồi xác nhận'])
+        self.filter.addItems(['Tất cả', 'Chưa xác định', 'Cú pháp không hợp lệ', 'Trùng lặp', 'Máy chủ báo không tồn tại', 'Đã có phản hồi xác nhận', REMOVE, REVIEW, 'Qua bước lọc cơ bản'])
         self.filter.currentIndexChanged.connect(self.render)
         row.addWidget(self.filter)
         row.addWidget(QLabel('Trang (1.000 dòng):'))
@@ -296,12 +301,30 @@ class MainWindow(QMainWindow):
         self.export_btn.setEnabled(False)
         self.select_btn = button('Chọn địa chỉ để gửi thử', self.select_recipients, row)
         self.select_btn.setEnabled(False)
+        button('Giải thích bộ lọc', lambda: self.tabs.setCurrentIndex(3), row)
         row.addStretch()
         layout.addLayout(row)
-        note = QLabel('Cú pháp, DNS hợp lệ hoặc gửi thành công không chứng minh hộp thư tồn tại. Không gửi thư khi nhập hay kiểm tra tệp.')
+        note = QLabel('“Qua bước lọc cơ bản” chỉ có nghĩa chưa thấy dấu hiệu trong các bộ lọc miễn phí. Không xác minh chắc chắn hộp thư, spamtrap hay độ uy tín người nhận.')
         note.setWordWrap(True)
         layout.addWidget(note)
         self.tabs.addTab(page, 'Danh sách và kết quả')
+
+    def build_free_help_tab(self):
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        help_view = QPlainTextEdit(
+            'LỌC EMAIL MIỄN PHÍ — KHÔNG DÙNG API TÍNH PHÍ\n\n'
+            'NÊN LOẠI: sai cú pháp, dòng trùng (giữ dòng xuất hiện đầu tiên), tên miền NXDOMAIN, Null MX, không có MX/A/AAAA; hoặc đã có DSN tương ứng báo hộp thư không tồn tại. Nguồn không bị xóa hoặc sửa.\n\n'
+            'CẦN XEM LẠI: tên miền email tạm thời có trong danh sách cộng đồng; địa chỉ chức năng như sales@, support@; tên miền nghi gõ sai; DNS lỗi tạm thời hoặc kiểm tra chưa xong. Địa chỉ chức năng và tên miền bị gắn cờ không đồng nghĩa spam hay hộp thư chết. Danh sách cộng đồng có thể thiếu hoặc lỗi thời.\n\n'
+            'QUA BƯỚC LỌC CƠ BẢN: cú pháp đúng, có tuyến nhận thư, không trùng và chưa thấy dấu hiệu trong bộ lọc này. Hộp thư vẫn CHƯA XÁC ĐỊNH nếu chưa có bằng chứng riêng. Đây không phải nhóm chắc chắn tồn tại hay chắc chắn an toàn để gửi.\n\n'
+            'GỢI Ý TÊN MIỀN: ví dụ gmial.com → gmail.com. Chỉ hiển thị gợi ý, không tự sửa địa chỉ và không gửi tới địa chỉ gợi ý.\n\n'
+            'GIỚI HẠN: không có dữ liệu spamtrap/abuse chuyên dụng, không kiểm tra chắc chắn hộp thư Gmail/Outlook, không quét SMTP hoặc dò tài khoản Google. Không cần đăng ký ZeroBounce, mua tín dụng hay nhập API key. Chỉ DNS cần mạng; bộ lọc rủi ro chạy cục bộ, không tải danh sách email lên dịch vụ xác minh.\n\n'
+            'XUẤT EXCEL: giữ mọi dòng/cột nguồn, thêm phân loại và các sheet Nên loại, Cần xem lại, Qua lọc cơ bản. Dùng bộ lọc ở màn hình để xem từng nhóm; xuất luôn giữ đầy đủ dữ liệu.\n\n'
+            'NGUỒN EMAIL TẠM THỜI: '+list_info()+'\nhttps://github.com/disposable-email-domains/disposable-email-domains\n'
+            'Danh sách được đóng gói trong EXE; bản cập nhật ứng dụng sẽ có bản chụp mới hơn, không tự tải dữ liệu khi mở app.')
+        help_view.setReadOnly(True)
+        layout.addWidget(help_view)
+        self.tabs.addTab(page, 'Bộ lọc miễn phí')
 
     def build_gmail_tab(self):
         page = QWidget()
@@ -483,7 +506,7 @@ class MainWindow(QMainWindow):
         sid = self.sid
         self.export_btn.setEnabled(True)
         self.task(lambda w: check_session(self.store, sid, w.cancel, lambda a,b: w.report.emit((a,b))),
-                  lambda ok: self.message('Đã kiểm tra xong. Bạn có thể xuất kết quả hoặc chủ động chọn địa chỉ gửi thử.' if ok else 'Đã hủy. Kết quả đã xử lý được giữ lại; bấm Kiểm tra để tiếp tục.'), 'Đang kiểm tra cú pháp và DNS…')
+                  lambda ok: self.message('Đã lọc miễn phí xong. Xem ba nhóm Nên loại / Cần xem lại / Qua bước lọc cơ bản. Hộp thư chưa có bằng chứng vẫn Chưa xác định.' if ok else 'Đã hủy. Kết quả đã xử lý được giữ lại; bấm Kiểm tra để tiếp tục.'), 'Đang kiểm tra cú pháp, DNS và lọc rủi ro miễn phí…')
 
     def refresh_sessions(self):
         current = self.sessions_combo.currentData()
@@ -521,21 +544,29 @@ class MainWindow(QMainWindow):
     def render(self, *args):
         if not self.sid:
             return
-        rows = self.store.rows(self.sid)
+        rows = [{**r, **screening(r)} for r in self.store.rows(self.sid)]
         mode = self.filter.currentIndex()
-        conditions = [lambda r: True, lambda r:r['mailbox']==UNKNOWN, lambda r:r['syntax']=='Không hợp lệ', lambda r:r['duplicate'].startswith('Trùng'), lambda r:r['mailbox']==ABSENT, lambda r:r['mailbox']==CONFIRMED]
+        conditions = [lambda r: True, lambda r:r['mailbox']==UNKNOWN, lambda r:r['syntax']=='Không hợp lệ', lambda r:r['duplicate'].startswith('Trùng'), lambda r:r['mailbox']==ABSENT, lambda r:r['mailbox']==CONFIRMED, lambda r:r['screening']==REMOVE, lambda r:r['screening']==REVIEW, lambda r:r['screening']==PASS]
         filtered = [r for r in rows if conditions[mode](r)]
         self.page_no.blockSignals(True)
         self.page_no.setMaximum(max(1, (len(filtered)+999)//1000))
         self.page_no.blockSignals(False)
         start = (self.page_no.value()-1)*1000
         group = filtered[start:start+1000]
-        values = [json.loads(r['source'])+[r[k] for k in RESULT_KEYS] for r in group]
-        self.model.set_data(self.store.session(self.sid)['headers']+RESULT_COLUMNS, values, [r['mailbox'] for r in group])
+        display_keys = ['screening','normalized','risk','mailbox','syntax','domain','duplicate','suggestion','send_state','reason','error','checked','screened']
+        titles = dict(zip(RESULT_KEYS, RESULT_COLUMNS))
+        values = [[r[k] for k in display_keys]+json.loads(r['source']) for r in group]
+        self.model.set_data([titles[k] for k in display_keys]+self.store.session(self.sid)['headers'], values, [CONFIRMED if r['mailbox']==CONFIRMED else r['screening'] for r in group])
+        self.view.setColumnWidth(0, 330)
+        self.view.setColumnWidth(1, 240)
+        self.view.setColumnWidth(2, 420)
         checked = sum(bool(r['checked']) for r in rows)
         duplicates = sum(r['duplicate'].startswith('Trùng') for r in rows)
         unknown = sum(r['mailbox']==UNKNOWN for r in rows)
-        self.counts.setText(f'{len(rows):,} dòng · Đã kiểm tra {checked:,} · Trùng {duplicates:,} · Chưa xác định {unknown:,} · Bộ lọc {len(filtered):,} dòng')
+        remove = sum(r['screening']==REMOVE for r in rows)
+        review = sum(r['screening']==REVIEW for r in rows)
+        passed = sum(r['screening']==PASS for r in rows)
+        self.counts.setText(f'{len(rows):,} dòng · Nên loại {remove:,} · Cần xem lại {review:,} · Qua bước lọc cơ bản {passed:,}\nĐã kiểm tra {checked:,} · Trùng {duplicates:,} · Hộp thư chưa xác định {unknown:,} · Bộ lọc hiện tại {len(filtered):,} dòng')
 
     def export(self):
         if not self.sid:

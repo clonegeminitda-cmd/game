@@ -9,7 +9,7 @@ import dns.exception
 import pytest
 from openpyxl import load_workbook
 
-from emailcheck.core import normalize, DNSChecker, check_session, read_table, sheet_names, export_xlsx
+from emailcheck.core import normalize, DNSChecker, check_session, read_table, sheet_names, export_xlsx, RESULT_COLUMNS
 from emailcheck.store import Store, UNKNOWN
 from tools.make_sample import generate
 
@@ -103,10 +103,10 @@ def test_1000_import_check_export_restore(store, tmp_path):
     export_xlsx(restored,sid,dest)
     assert source.read_bytes() == before
     wb = load_workbook(dest, data_only=False)
-    assert wb.sheetnames == ['Tổng hợp','Kết quả đầy đủ','Chưa xác định']
+    assert wb.sheetnames == ['Tổng hợp','Kết quả đầy đủ','Chưa xác định','Nên loại','Cần xem lại','Qua lọc cơ bản']
     ws = wb['Kết quả đầy đủ']
-    assert ws.max_row == 1001 and ws.max_column == 13
-    assert ws.freeze_panes == 'A2' and ws.auto_filter.ref == 'A1:M1001'
+    assert ws.max_row == 1001 and ws.max_column == len(headers)+len(RESULT_COLUMNS)
+    assert ws.freeze_panes == 'A2' and ws.auto_filter.ref == 'A1:Q1001'
     assert ws['D2'].data_type == 's' and ws['D2'].value.startswith('=HYPERLINK')
     assert ws['D3'].data_type == 's' and ws['D3'].value == '+123'
     assert [ws.cell(i+2,1).value for i in range(1000)] == list(range(1,1001))

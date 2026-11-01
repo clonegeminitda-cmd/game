@@ -14,3 +14,5 @@ Bản đóng gói sử dụng CPython, Qt/PySide6 và các thư viện Python kh
 | PyInstaller bootloader | GPL với ngoại lệ phân phối ứng dụng; https://github.com/pyinstaller/pyinstaller |
 
 Không sửa đổi Qt/PySide6. Có thể dùng mã nguồn và script build để tạo lại ứng dụng với thư viện tương thích được thay thế. Các quyền theo LGPL, gồm sửa đổi và phân tích ngược để gỡ lỗi thay đổi thư viện, không bị hạn chế bởi thông báo này. Mã nguồn Qt/PySide6 đúng phiên bản có tại các liên kết trên.
+
+Danh sách tên miền email tạm thời: disposable-email-domains/disposable-email-domains, CC0 1.0, bản chụp 2026-11-01. Giấy phép có trong LICENSES/disposable-domains-CC0.txt; nguồn và commit trong DISPOSABLE-SOURCES.json.

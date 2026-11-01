@@ -38,6 +38,15 @@ def test_gui_import_check_restore_preview_no_recipients_selected(qtbot,store,tmp
     sid=window.sid
     assert window.model.rowCount()==1000
     assert window.export_btn.isEnabled()
+    assert window.model.headers[0]=='Sàng lọc miễn phí'
+    assert 'Nên loại' in window.counts.text() and 'Cần xem lại' in window.counts.text()
+    window.filter.setCurrentIndex(6)
+    assert window.model.rowCount()>0
+    assert all('Nên loại' in str(row[0]) for row in window.model.values)
+    window.filter.setCurrentIndex(7)
+    assert window.model.rowCount()>0
+    assert all(row[0]=='Cần xem lại' for row in window.model.values)
+    window.filter.setCurrentIndex(0)
     assert store.jobs()==[]
     dialog=SendDialog(store,store.rows(sid),window)
     qtbot.addWidget(dialog)

@@ -50,6 +50,12 @@ class Store:
             CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);
             CREATE INDEX IF NOT EXISTS rows_session ON rows(session_id,row_no);
             ''')
+            # Additive migration preserves v1.0 source data, Gmail token and outbox.
+            existing = {r['name'] for r in c.execute('PRAGMA table_info(rows)')}
+            for name in ('screening', 'risk', 'suggestion', 'screened'):
+                if name not in existing:
+                    c.execute(f"ALTER TABLE rows ADD COLUMN {name} TEXT DEFAULT ''")
+            c.execute("UPDATE rows SET syntax='Đúng cú pháp' WHERE syntax='Hợp lệ'")
 
     @contextmanager
     def connect(self):
@@ -100,7 +106,7 @@ class Store:
         self.update_rows([(rid, values)])
 
     def update_rows(self, updates):
-        allowed = {'normalized','dedup_key','syntax','domain','duplicate','mailbox','send_state','reason','error','checked'}
+        allowed = {'normalized','dedup_key','syntax','domain','duplicate','mailbox','send_state','reason','error','checked','screening','risk','suggestion','screened'}
         with self.connect() as c:
             for rid, values in updates:
                 if not values or not set(values) <= allowed:

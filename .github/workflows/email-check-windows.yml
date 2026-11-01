@@ -1,0 +1,49 @@
+name: Email Check Excel - Windows x64
+on:
+  push:
+    branches: [email-check-excel-windows]
+    paths: ['email-check-excel/**', '.github/workflows/email-check-windows.yml']
+  pull_request:
+    paths: ['email-check-excel/**', '.github/workflows/email-check-windows.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: email-check-excel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+          cache: pip
+          cache-dependency-path: email-check-excel/requirements*.txt
+      - name: Test, build and launch Windows executable
+        shell: pwsh
+        run: ./tools/build_windows.ps1
+      - name: Upload executable and portable ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmailCheckExcel-Windows-x64
+          path: |
+            email-check-excel/EmailCheckExcel-Windows-x64.zip
+            email-check-excel/release/EmailCheckExcel.exe
+            email-check-excel/release/HUONG-DAN.md
+            email-check-excel/release/KIEM-THU-WINDOWS.json
+            email-check-excel/release/SHA256.txt
+          retention-days: 30
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmailCheckExcel-test-evidence
+          path: |
+            email-check-excel/work/test-results.xml
+            email-check-excel/work/exe-smoke/smoke-report.json
+            email-check-excel/work/exe-smoke/Smoke-output-1000.xlsx
+          retention-days: 30

@@ -1,0 +1,12 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+*.spec
+build/
+dist/
+release/
+work/
+*.sqlite3*
+*.dpapi
+oauth-desktop.json
+EmailCheckExcel-Windows-x64.zip

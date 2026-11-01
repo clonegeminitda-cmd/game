@@ -22,7 +22,7 @@ def test_gui_import_check_restore_preview_no_recipients_selected(qtbot,store,tmp
         return check_session(store,sid,cancel,progress,FakeDNS())
     monkeypatch.setattr('emailcheck.ui.check_session',mocked)
     window.start_check()
-    qtbot.waitUntil(lambda: not window.busy(),timeout=15000)
+    qtbot.waitUntil(lambda: not window.busy() and window.model.rowCount()==1000,timeout=15000)
     sid=window.sid
     assert window.model.rowCount()==1000
     assert window.export_btn.isEnabled()

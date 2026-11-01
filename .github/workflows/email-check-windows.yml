@@ -1,8 +1,5 @@
 name: Email Check Excel - Windows x64
 on:
-  push:
-    branches: [email-check-excel-windows]
-    paths: ['email-check-excel/**', '.github/workflows/email-check-windows.yml']
   pull_request:
     paths: ['email-check-excel/**', '.github/workflows/email-check-windows.yml']
   workflow_dispatch:

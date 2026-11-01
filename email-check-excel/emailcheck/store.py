@@ -97,11 +97,15 @@ class Store:
             return [dict(r) for r in c.execute('SELECT * FROM rows WHERE session_id=? ORDER BY row_no', (sid,))]
 
     def update_row(self, rid, **values):
+        self.update_rows([(rid, values)])
+
+    def update_rows(self, updates):
         allowed = {'normalized','dedup_key','syntax','domain','duplicate','mailbox','send_state','reason','error','checked'}
-        if not values or not set(values) <= allowed:
-            raise ValueError('Cột cập nhật không hợp lệ')
         with self.connect() as c:
-            c.execute('UPDATE rows SET ' + ','.join(k + '=?' for k in values) + ' WHERE id=?', (*values.values(), rid))
+            for rid, values in updates:
+                if not values or not set(values) <= allowed:
+                    raise ValueError('Cột cập nhật không hợp lệ')
+                c.execute('UPDATE rows SET ' + ','.join(k + '=?' for k in values) + ' WHERE id=?', (*values.values(), rid))
 
     def state(self, sid, state):
         with self.connect() as c:

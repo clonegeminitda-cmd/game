@@ -213,6 +213,10 @@ class Outbox:
             if not jobs:
                 progress('Đã xử lý xong hàng đợi.')
                 break
+            if cancel.is_set():
+                break
+            if pause.is_set():
+                continue
             cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat(timespec='seconds')
             with self.store.connect() as c:
                 used = c.execute('SELECT COUNT(*) FROM jobs WHERE sent_at>=?', (cutoff,)).fetchone()[0]
@@ -300,6 +304,8 @@ def correlate(raw, job):
             nonexistent = re.search(r'(?i)(user unknown|unknown user|no such (?:user|mailbox)|mailbox (?:does not exist|not found)|recipient (?:not found|does not exist)|(?:email )?account (?:does not exist|not found)|address.*(?:not found|does not exist)|hộp thư không tồn tại)', diagnostic)
             if action == 'failed' and status == '5.1.1' and nonexistent:
                 return ('absent', 'DSN_5.1.1', 'DSN 5.1.1 có nội dung hộp thư không tồn tại; khớp định danh thư và người nhận')
+            if action in ('failed', 'delayed') and (status.startswith(('5.7.', '4.7.')) or re.search(r'(?i)(rate.?limit|quota|blocked|spam policy)', diagnostic)):
+                return ('blocked', 'DSN_' + status, 'Thông báo tương ứng báo hạn mức hoặc bị chặn; dừng hàng đợi, chưa kết luận hộp thư không tồn tại')
             if action in ('failed', 'delayed'):
                 return ('bounce', 'DSN_' + status, 'Thư báo lỗi/chậm gửi tương ứng; chưa đủ bằng chứng hộp thư không tồn tại')
     senders = getaddresses(msg.get_all('From', []))
@@ -316,10 +322,15 @@ def correlate(raw, job):
             content = part.get_content()
             if isinstance(content, str):
                 for line in content.splitlines():
+                    if not line.strip():
+                        continue
                     if line.startswith('>') or re.match(r'(?i)^On .+wrote:|^Vào .+đã viết:', line):
                         break
                     if line.strip() == confirmation_text(job):
                         return ('confirmed', 'EXPLICIT_REPLY', 'Phản hồi chứa dòng xác nhận riêng, khớp người gửi và định danh thư; dựa trên dữ liệu tiêu đề email')
+                    # Require confirmation as the first nonempty new line;
+                    # unquoted copies of the original do not count.
+                    break
     return None
 
 
@@ -366,6 +377,8 @@ def monitor(store, gmail, cancel, progress=lambda s: None, include_expired=False
                         c.execute('UPDATE rows SET mailbox=?,error=?,reason=? WHERE id=?', (CONFIRMED, code, detail, job['row_id']))
                     else:
                         c.execute("UPDATE rows SET send_state='Thư trả về / chậm gửi',error=?,reason=? WHERE id=?", (code, detail, job['row_id']))
+                if kind == 'blocked':
+                    store.set('queue_halt', detail)
                 total += 1
         page = listing.get('nextPageToken')
         if not page or not complete:
@@ -374,7 +387,7 @@ def monitor(store, gmail, cancel, progress=lambda s: None, include_expired=False
         with store.connect() as c:
             c.executemany('UPDATE jobs SET last_scan=? WHERE id=?', [(scan_started, j['id']) for j in jobs])
     with store.connect() as c:
-        bounces = c.execute("SELECT COUNT(DISTINCT job_id) FROM events WHERE kind IN ('absent','bounce') AND created>=?", ((datetime.now(timezone.utc)-timedelta(hours=24)).isoformat(timespec='seconds'),)).fetchone()[0]
+        bounces = c.execute("SELECT COUNT(DISTINCT job_id) FROM events WHERE kind IN ('absent','bounce','blocked') AND created>=?", ((datetime.now(timezone.utc)-timedelta(hours=24)).isoformat(timespec='seconds'),)).fetchone()[0]
     if bounces >= 3:
         store.set('queue_halt', 'Có ít nhất 3 thư trả về trong 24 giờ. Hãy kiểm tra danh sách và nội dung trước khi tiếp tục.')
     progress(f'Đã cập nhật {total} phản hồi tương ứng. Không có phản hồi vẫn là Chưa xác định.')

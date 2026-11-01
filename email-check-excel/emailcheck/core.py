@@ -156,6 +156,8 @@ def check_session(store, sid, cancel, progress=lambda a, b: None, checker=None):
     rows = store.rows(sid)
     col = store.session(sid)['email_col']
     seen, pending = {}, {}
+    updates = []
+    done = sum(bool(r['checked']) for r in rows)
     store.state(sid, 'checking')
     try:
         for i, row in enumerate(rows):
@@ -166,14 +168,20 @@ def check_session(store, sid, cancel, progress=lambda a, b: None, checker=None):
                 address, key, domain = normalize(source[col])
                 duplicate = f"Trùng dòng {seen[key]}" if key in seen else 'Không trùng'
                 seen.setdefault(key, row['row_no'])
-                store.update_row(row['id'], normalized=address, dedup_key=key, syntax='Hợp lệ', duplicate=duplicate)
+                updates.append((row['id'], dict(normalized=address, dedup_key=key, syntax='Hợp lệ', duplicate=duplicate)))
                 if not row['checked']:
                     pending.setdefault(domain, []).append(row['id'])
             except ValueError as exc:
                 if not row['checked']:
-                    store.update_row(row['id'], syntax='Không hợp lệ', domain='Không kiểm tra', reason=str(exc), error='SYNTAX', checked=now())
-            if i % 50 == 0:
-                progress(sum(bool(r['checked']) for r in store.rows(sid)), len(rows))
+                    updates.append((row['id'], dict(syntax='Không hợp lệ', domain='Không kiểm tra', reason=str(exc), error='SYNTAX', checked=now())))
+                    done += 1
+            if len(updates) >= 50:
+                store.update_rows(updates)
+                updates.clear()
+                progress(done, len(rows))
+        if updates:
+            store.update_rows(updates)
+        progress(done, len(rows))
         if not cancel.is_set():
             # Bounded domain concurrency, one DNS query sequence per domain.
             with ThreadPoolExecutor(max_workers=8) as pool:
@@ -184,11 +192,15 @@ def check_session(store, sid, cancel, progress=lambda a, b: None, checker=None):
                             f.cancel()
                         break
                     status, code, reason = future.result()
-                    for rid in futures[future]:
+                    ids = futures[future]
+                    for offset in range(0, len(ids), 100):
                         if cancel.is_set():
                             break
-                        store.update_row(rid, domain=status, reason=reason, error=code, checked=now())
-                    progress(sum(bool(r['checked']) for r in store.rows(sid)), len(rows))
+                        batch = ids[offset:offset+100]
+                        stamp = now()
+                        store.update_rows([(rid, dict(domain=status, reason=reason, error=code, checked=stamp)) for rid in batch])
+                        done += len(batch)
+                        progress(done, len(rows))
         store.state(sid, 'cancelled' if cancel.is_set() else 'done')
         return not cancel.is_set()
     except BaseException:

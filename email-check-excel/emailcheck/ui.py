@@ -181,6 +181,7 @@ class MainWindow(QMainWindow):
         self.worker = None
         self.workers = []
         self.connected = False
+        self.queue_running = False
         self.started = 0
         self.setWindowTitle('Email Check Excel')
         self.resize(1240, 820)
@@ -405,6 +406,7 @@ class MainWindow(QMainWindow):
 
     def task_finished(self, worker):
         if self.worker is worker:
+            self.queue_running = False
             self.worker = None
             self.set_busy(False)
             self.progress.setRange(0, 100)
@@ -618,6 +620,7 @@ class MainWindow(QMainWindow):
             gmail.connect()
             Outbox(self.store, gmail).run(w.cancel, w.pause, w.report.emit, limit, interval)
         if self.task(run, name='Đang xử lý hàng đợi đã được xác nhận…'):
+            self.queue_running = True
             self.pause_btn.setEnabled(True)
 
     def pause_queue(self):
@@ -633,7 +636,7 @@ class MainWindow(QMainWindow):
             self.message('Đã yêu cầu tạm dừng. Thư đang gửi có thể đã được máy chủ chấp nhận.')
 
     def cancel_queue(self):
-        if self.worker:
+        if self.worker and self.queue_running:
             self.worker.cancel.set()
         Outbox(self.store, None).cancel_pending()
         self.refresh_queue()

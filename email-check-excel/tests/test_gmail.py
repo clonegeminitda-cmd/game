@@ -128,13 +128,14 @@ def test_dsn_precise_evidence_and_no_false_conclusions(store,tmp_path):
     job=jobs[0]
     assert correlate(dsn(job),job)[0]=='absent'
     assert correlate(dsn(job,status='5.2.2',diag='smtp; 552 mailbox full'),job)[0]=='bounce'
-    assert correlate(dsn(job,diag='smtp; 550 blocked by policy'),job)[0]=='bounce'
+    assert correlate(dsn(job,diag='smtp; 550 blocked by policy'),job)[0]=='blocked'
     assert correlate(dsn(job,recipient='other@example.com'),job) is None
     assert correlate(dsn(job,mid='<other@id>'),job) is None
     assert correlate(reply(job),job)[0]=='confirmed'
     assert correlate(reply(job,sender='impostor@example.com'),job) is None
     assert correlate(reply(job,text='> '+confirmation_text(job)),job) is None
     assert correlate(reply(job,text='Đây là tự động trả lời\n> '+confirmation_text(job)),job) is None
+    assert correlate(reply(job,text='Nội dung tự động\n'+confirmation_text(job)),job) is None
 
 
 def test_monitor_restart_48h_and_bounce_halt(store,tmp_path):
@@ -162,6 +163,17 @@ def test_confirmation_and_no_response_unknown(store,tmp_path):
     monitor(store,MockGmail(raws={'reply':reply(jobs[0])}),threading.Event())
     assert store.rows(sid)[0]['mailbox']==CONFIRMED
     assert store.rows(sid)[1]['mailbox']==UNKNOWN
+
+
+def test_single_blocked_dsn_halts_queue_without_inference(store,tmp_path):
+    sid,jobs=prepare(store,tmp_path)
+    enqueue(store,jobs,True)
+    with store.connect() as c:
+        c.execute("UPDATE jobs SET state='sent',sent_at=?",(datetime.now(timezone.utc).isoformat(timespec='seconds'),))
+    mock=MockGmail(raws={'blocked':dsn(jobs[0],status='5.7.1',diag='smtp; 550 blocked by policy')})
+    monitor(store,mock,threading.Event())
+    assert store.get('queue_halt')
+    assert store.rows(sid)[0]['mailbox']==UNKNOWN
 
 
 def test_reconcile_exact_sent_message_no_retry(store,tmp_path):

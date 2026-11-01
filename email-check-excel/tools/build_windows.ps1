@@ -8,7 +8,7 @@ python -m pip install -r requirements-dev.txt
 Check-Exit 'Install dependencies'
 if (-not $SkipTests) {
     $env:QT_QPA_PLATFORM = 'offscreen'
-    python -m pytest -q --junitxml=work/test-results.xml
+    python -m pytest -q --durations=10 --junitxml=work/test-results.xml
     Check-Exit 'Tests'
     Remove-Item Env:QT_QPA_PLATFORM -ErrorAction SilentlyContinue
 }
@@ -27,9 +27,12 @@ if (-not $report.ok) { throw 'Executable smoke test report is not successful' }
 New-Item -ItemType Directory -Force -Path release | Out-Null
 Copy-Item 'dist\EmailCheckExcel.exe' 'release\EmailCheckExcel.exe' -Force
 Copy-Item 'README-VI.md' 'release\HUONG-DAN.md' -Force
+Copy-Item 'THIRD-PARTY.md' 'release\THIRD-PARTY.md' -Force
 Copy-Item 'work\exe-smoke\smoke-report.json' 'release\KIEM-THU-WINDOWS.json' -Force
 python tools/make_sample.py release/sample
 Check-Exit 'Sample generation'
-Compress-Archive -Path release\* -DestinationPath EmailCheckExcel-Windows-x64.zip -Force
+python tools/collect_licenses.py release/LICENSES
+Check-Exit 'Collect third-party notices'
 Get-FileHash release\EmailCheckExcel.exe -Algorithm SHA256 | Format-List | Out-File release\SHA256.txt
+Compress-Archive -Path release\* -DestinationPath EmailCheckExcel-Windows-x64.zip -Force
 Write-Output 'Windows x64 build and executable smoke test completed.'

@@ -127,6 +127,7 @@ def test_dsn_precise_evidence_and_no_false_conclusions(store,tmp_path):
     sid,jobs=prepare(store,tmp_path)
     job=jobs[0]
     assert correlate(dsn(job),job)[0]=='absent'
+    assert correlate(dsn(job,diag='smtp; 550-5.1.1 The email account that you tried to reach does not exist.'),job)[0]=='absent'
     assert correlate(dsn(job,status='5.2.2',diag='smtp; 552 mailbox full'),job)[0]=='bounce'
     assert correlate(dsn(job,diag='smtp; 550 blocked by policy'),job)[0]=='blocked'
     assert correlate(dsn(job,recipient='other@example.com'),job) is None

@@ -301,7 +301,7 @@ def correlate(raw, job):
             diagnostic = str(block.get('Diagnostic-Code', ''))
             # An enhanced status alone is insufficient; require corresponding
             # unknown-recipient text, exact original ID and matching recipient.
-            nonexistent = re.search(r'(?i)(user unknown|unknown user|no such (?:user|mailbox)|mailbox (?:does not exist|not found)|recipient (?:not found|does not exist)|(?:email )?account (?:does not exist|not found)|address.*(?:not found|does not exist)|hộp thư không tồn tại)', diagnostic)
+            nonexistent = re.search(r'(?i)(user unknown|unknown user|no such (?:user|mailbox)|mailbox (?:does not exist|not found)|recipient (?:not found|does not exist)|(?:email )?account.{0,100}(?:does not exist|not found)|address.*(?:not found|does not exist)|hộp thư không tồn tại)', diagnostic)
             if action == 'failed' and status == '5.1.1' and nonexistent:
                 return ('absent', 'DSN_5.1.1', 'DSN 5.1.1 có nội dung hộp thư không tồn tại; khớp định danh thư và người nhận')
             if action in ('failed', 'delayed') and (status.startswith(('5.7.', '4.7.')) or re.search(r'(?i)(rate.?limit|quota|blocked|spam policy)', diagnostic)):
